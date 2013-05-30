@@ -19,7 +19,9 @@ USE_FAREST_POINT_SAMPLING = 0;
 NUM_SAMPLES = 100;
 
 %% input
-[verts,faces] = read_mesh([MYTOOLBOXROOT 'data/armadillo_v502.off']);
+[verts,faces] = read_mesh([MYTOOLBOXROOT 'data/wolf0.off']);
+% [verts,faces] = create_mesh(50); verts = verts'; faces = faces';
+ 
 nverts = size(verts,1);
 if KEEP_DETAIL
     L = compute_mesh_laplacian(verts,faces,'conformal');%combinatorial;conformal;%spring
@@ -39,10 +41,13 @@ if USE_FAREST_POINT_SAMPLING
         plot_fast_marching_mesh(verts,faces, [], [], options);hold on;view3d zoom;
     end
 else
-    % landmark = 1:nverts;  
-    landmark = 1;
+    landmark = 1:100:nverts;  
+%     landmark = 1;
 end
 %%
+% options.constraint_pos = verts(landmark,:)+10*rand(length(landmark),3);
+options.constraint_pos = verts(landmark,:);
+
 s_weights= ones(length(verts),1)*1;
 c_weights= ones(length(landmark),1)*constraint_weight;
 options.normalize = 0;
@@ -52,7 +57,8 @@ options.type = 'conformal'; % the other choice is 'combinatorial', 'distance', s
 options.method = 'hard';% 'hard', 'soft', 'bi-harmonic'
 [newVertices, A] = compute_least_square_mesh(verts,faces,landmark,delta_coords,s_weights,c_weights,options);
 figure;set(gcf,'color','white');
-trisurf(faces,newVertices(:,1),newVertices(:,2),newVertices(:,3)); axis off; axis equal; view3d rot;
+trisurf(faces,newVertices(:,1),newVertices(:,2),newVertices(:,3)); axis off; axis equal; view3d rot;hold on;
+scatter3(options.constraint_pos(:,1),options.constraint_pos(:,2), options.constraint_pos(:,3),100,'r','filled');
 
 options.method = 'soft';% 'hard', 'soft', 'bi-harmonic'
 [newVertices, A] = compute_least_square_mesh(verts,faces,landmark,delta_coords,s_weights,c_weights,options);
