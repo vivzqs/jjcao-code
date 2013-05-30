@@ -32,7 +32,7 @@ switch lower(ext)
     case 'wrl'
         [vertex,face] = read_wrl(file);
     case 'obj'
-        [vertex,face,normal] = read_obj(file);
+        [vertex,face,normal,uv] = read_obj(file);
     case 'tet'
         [vertex,face] = read_tet(file);        
     case 'm'
