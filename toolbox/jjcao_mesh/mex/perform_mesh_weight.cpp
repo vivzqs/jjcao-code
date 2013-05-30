@@ -83,11 +83,12 @@ double cotangent(const Vector3d& P,
 //        return 0.0; // undefined
 //}
 
-void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, int type, double *vert_areas, std::vector<T>& coef)
+void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, int type, double *vert_areas, SparseMatrix<double>& sm)
 {
 	int tmp;
 	int i,j,m;
 	double dtmp;
+	std::vector<T> coef(nverts*6);	
 	switch(type)
 	{
 	case 0: //'combinatorial' or 'graph'
@@ -102,8 +103,10 @@ void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, i
 				coef.push_back(T(i,j,1));
 			}			
 		}
+		sm.setFromTriplets(coef.begin(), coef.end());
+		//sm.coeffRef(1,1) = 2;sm.coeffRef(2,2) = 3;//sm.coeffRef(0,0) = 1;
 		break;
-	case 4: //Mean_curvature
+	case 4: //Mean_curvature		
 		for (int k = 0; k < nfaces; ++k)
 		{
 			int tmp = 3*k;
@@ -118,12 +121,16 @@ void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, i
 				coef.push_back(T(i,j,dtmp));
 			}			
 		}
+		sm.setFromTriplets(coef.begin(), coef.end());
+		//sm = sm + sm.transpose();		//todo
 		break;
 	default:
 		stringstream ss("type: ");	 
 		ss << type << " is not supported!";
 		mexErrMsgTxt(ss.str().c_str());
 	}
+
+	sm.makeCompressed();
 }
 //void perform_mesh_weight_dense_matrix(double* verts, int nverts, double *faces, int nfaces, int type, double *vert_areas, double *L)
 //{
@@ -201,23 +208,15 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 	///////////////////////////////////////////////	
 	for(int i = 0; i < nfaces*3; ++i)
 		--faces[i];
-
-	std::vector<T> coef(nverts*6);
-	perform_mesh_weight(verts, nverts, faces, nfaces, *type, vert_areas, coef);
-
+	
 	SparseMatrix<double> sm(nverts, nverts);
-	sm.setFromTriplets(coef.begin(), coef.end());
-	//sm.coeffRef(1,1) = 2;sm.coeffRef(2,2) = 3;//sm.coeffRef(0,0) = 1;
-	sm.makeCompressed();
+	perform_mesh_weight(verts, nverts, faces, nfaces, *type, vert_areas, sm);
+
 	typedef SparseMatrix<double>::Index Index;
 	typedef SparseMatrix<double>::Scalar Scalar;
 	Index* innerInd = sm.innerIndexPtr();
-	Index innerSize = sm.innerSize();
 	Index* outerInd = sm.outerIndexPtr();
-	Index outerSize = sm.outerSize();
 	Scalar* valuePtr = sm.valuePtr();
-	//const Index rows = sm.rows();
-	//const Index cols = sm.cols();
 
 	///////////////////////////////////////////////
 	// output 0
@@ -238,11 +237,11 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 		//mexPrintf("%f %f\n", L[k], irs[k]);
 	}
 
-	for (int k = 0; k<outerSize; ++k)
+	for (int k = 0; k<nverts; ++k)
 	{
 		//long ltmp = outerInd[k];
 		jcs[k] = outerInd[k];
 	}
-	//long ltmp = outerInd[outerSize];
-	jcs[outerSize]=outerInd[outerSize];
+	//long ltmp = outerInd[nverts];
+	jcs[nverts]=outerInd[nverts];
 }
