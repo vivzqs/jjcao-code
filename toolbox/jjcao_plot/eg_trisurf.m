@@ -6,11 +6,11 @@
 
 clear;clc;close all;
 %MYTOOLBOXROOT='E:/jjcaolib/toolbox';
-MYTOOLBOXROOT='../../';
-addpath ([MYTOOLBOXROOT '/jjcao_mesh'])
-addpath ([MYTOOLBOXROOT '/jjcao_io'])
-addpath ([MYTOOLBOXROOT '/jjcao_interact'])
-addpath ([MYTOOLBOXROOT '/jjcao_common'])
+MYTOOLBOXROOT='../';
+addpath ([MYTOOLBOXROOT 'jjcao_mesh'])
+addpath ([MYTOOLBOXROOT 'jjcao_io'])
+addpath ([MYTOOLBOXROOT 'jjcao_interact'])
+addpath ([MYTOOLBOXROOT 'jjcao_common'])
 
 %% load a mesh
 test_file = {[MYTOOLBOXROOT '/data/fandisk.off'],[MYTOOLBOXROOT '/data/wolf0.off'],[MYTOOLBOXROOT '/data/catHead_v131.off']};
