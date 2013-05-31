@@ -1,5 +1,5 @@
 mex mex/adjacency_matrix.cpp
-mex -largeArrayDims -I"D:/eigen-3.1.3" mex/perform_mesh_weight.cpp
+mex -largeArrayDims -I"../../include/eigen-3.1.3" mex/perform_mesh_weight.cpp
 
 %% geodesic
 % there are three implementations as follows:
