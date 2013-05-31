@@ -22,20 +22,20 @@ M.edges = compute_edges(M.faces);
 %% display mesh 1
 figure('Name','1'); set(gcf,'color','white');hold off;
 h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
-    'FaceColor', 'cyan',  'edgecolor',[1,0,0], 'faceAlpha', 0.9); axis off; axis equal; view3d rot;
+    'FaceColor', 'cyan',  'edgecolor',[1,0,0], 'faceAlpha', 0.9); axis off; axis equal; mouse3d
 
 %% display mesh 2
 figure('Name','2'); set(gcf,'color','white');hold off;
 shading_type = 'flat';
 h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
-    'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; view3d rot;
+    'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; mouse3d
 % set(h, 'edgecolor', 'none'); % cancel display of edge.
 
 %% display mesh 3
 figure('Name','3'); set(gcf,'color','white');hold off;
 shading_type = 'interp';
 h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
-    'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; view3d rot;
+    'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; mouse3d
 set(h, 'edgecolor', 'none'); % cancel display of edge.
 
 colormap jet(256);

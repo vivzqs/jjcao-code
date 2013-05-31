@@ -7,11 +7,11 @@
 
 clear;clc;close all;
 %MYTOOLBOXROOT='E:/jjcaolib/toolbox';
-MYTOOLBOXROOT='../../';
-addpath ([MYTOOLBOXROOT '/jjcao_mesh'])
-addpath ([MYTOOLBOXROOT '/jjcao_io'])
-addpath ([MYTOOLBOXROOT '/jjcao_interact'])
-addpath ([MYTOOLBOXROOT '/jjcao_common'])
+MYTOOLBOXROOT='../';
+addpath ([MYTOOLBOXROOT 'jjcao_mesh'])
+addpath ([MYTOOLBOXROOT 'jjcao_io'])
+addpath ([MYTOOLBOXROOT 'jjcao_interact'])
+addpath ([MYTOOLBOXROOT 'jjcao_common'])
 
 
 %% load a mesh
@@ -38,15 +38,14 @@ figure;set(gcf,'color','white');hold on;
 % scatter3(M.verts(:,1),M.verts(:,2), M.verts(:,3),10,'b','filled');
 scatter3(M.verts(:,1),M.verts(:,2), M.verts(:,3),10,M.verts(:,2),'filled');
 axis off;    axis equal;   set(gcf,'Renderer','OpenGL');
-camorbit(0,0,'camera'); axis vis3d; view(-90, 0);view3d rot;
-view3d rot;
+camorbit(0,0,'camera'); axis vis3d; view(-90, 0); mouse3d
 
 %% display mesh
 figure('Name','Mesh'); set(gcf,'color','white');hold on;
 % options.face_vertex_color = M.verts(:,3);
 options.face_vertex_color = M.verts;
 options.alfa = 0.6;
-h = plot_mesh(M.verts, M.faces, options);camorbit(0,0,'camera'); axis vis3d; view(-90, 0);view3d rot;
+h = plot_mesh(M.verts, M.faces, options);camorbit(0,0,'camera'); axis vis3d; view(-90, 0);mouse3d
 set(h, 'edgecolor', 'none'); % cancel display of edge.
 %colormap jet(256);
 colorbar('off');
@@ -55,9 +54,10 @@ colorbar('off');
 boundary=compute_boundary(M.faces);
 scatter3(M.verts(boundary,1),M.verts(boundary,2), M.verts(boundary,3),50,'r','filled');
 
-%% display mesh
+%% display texture, why not correct?
 figure('Name','Texture'); set(gcf,'color','white');hold on;
 options=[];
-options.texture = rgb2gray(imread([MYTOOLBOXROOT '/data/Texture.bmp']));
+% options.texture = rgb2gray(imread([MYTOOLBOXROOT '/data/Texture.bmp']));
+options.texture = imread([MYTOOLBOXROOT '/data/Texture.bmp']);
 options.texture_coords = M.uv;
-h = plot_mesh(M.verts, M.faces, options);camorbit(0,0,'camera'); axis vis3d; view(-90, 0);view3d rot;
+h = plot_mesh(M.verts, M.faces, options);camorbit(0,0,'camera'); axis vis3d; view(-90, 0);mouse3d
