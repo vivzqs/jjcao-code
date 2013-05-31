@@ -24,7 +24,10 @@ NUM_SAMPLES = 100;
  
 nverts = size(verts,1);
 if KEEP_DETAIL
-    L = compute_mesh_laplacian(verts,faces,'conformal');%combinatorial;conformal;%spring
+    options.use_c_implementation = 1;
+    tic
+    L = compute_mesh_laplacian(verts,faces,'conformal',options);%combinatorial;conformal;%spring
+    toc
     delta_coords = L*verts; % keep details using Laplacian coordinates
 else
     delta_coords = zeros(nverts,3); % remove details

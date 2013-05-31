@@ -14,17 +14,18 @@
 			%       2: 'spring': W(i,j) = 1/d_ij where d_ij is distance between vertex
 			%           i and j.
 			%       3: 'conformal' or 'dcp': W(i,j) = (cot(alpha_ij)+cot(beta_ij))/2 where alpha_ij and
-			%           beta_ij are the adjacent angle to edge (i,j). Refer to Skeleton
-			%           Extraction by Mesh Extraction_08, and Intrinsic Parameterizations of Surface Meshes_02, and Computing discrete minimal surfaces
-			%           andtheir conjugates_93, Lemma 2 of On the convergence of metric and geometric properties of
-			%           polyhedral surfaces_06, and Characterizing Shape Using Conformal Factors_0,.
-			%       4: 'Mean_curvature',W(i,j) = (1/area_i)*(cot(alpha_ij)+cot(beta_ij))/2 where alpha_ij and
-			%           beta_ij are the adjacent angle to edge (i,j), area_i is the
-			%           area of vertex i's Voroni vicinity. Refer to Discrete Differential-Geometry Operators_for triangulated 2-manifolds_02
+			%           beta_ij are the adjacent angle to edge (i,j). (do not offer W(i,j) = cot(alpha_ij)+cot(beta_ij) anymore)
+			%           Refer to Computing discrete minimal surfaces and their conjugates_93, 
+			%           Lemma 2 of On the convergence of metric and geometric properties of polyhedral surfaces_06 and 
+			%           Characterizing Shape Using Conformal Factors_08.
+			%           Refer to Skeleton Extraction by Mesh Extraction_08, and Intrinsic Parameterizations of Surface Meshes_02.
+			%       4: 'Mean_curvature' or 'Laplace-Beltrami': W(i,j) = (1/area_i)*(cot(alpha_ij)+cot(beta_ij))/2 where alpha_ij and
+			%           beta_ij are the adjacent angle to edge (i,j), area_i is the area of vertex i's Voroni vicinity. 
+			%           Refer to Discrete Differential-Geometry Operators_for triangulated 2-manifolds_02
 			%       5: 'Manifold-harmonic': W(i,j) = (1/sqrt(area_i*area_j))*(cot(alpha_ij)+cot(beta_ij))/2 where alpha_ij and
-			%           beta_ij are the adjacent angle to edge (i,j). Refer to Spectral Geometry Processing with Manifold Harmonics_08
-			%       6: 'mvc': W(i,j) = [tan(/_kij/2)+tan(/_jil/2)]/d_ij where /_kij and /_jil
-			%           are angles at i
+			%           beta_ij are the adjacent angle to edge (i,j). 
+			%           Refer to Spectral Geometry Processing with Manifold Harmonics_08
+			%       6: 'mvc': W(i,j) = [tan(/_kij/2)+tan(/_jil/2)]/d_ij where /_kij and /_jil are angles at i
 		options.?:
           
 *
@@ -40,10 +41,13 @@
 #include <vector>
 #include <algorithm> 
 #include <iostream>
-typedef Eigen::Triplet<double> T;
 
 using namespace Eigen;
 using namespace std;
+
+typedef Triplet<double> T;
+typedef SparseMatrix<double>::Index Index;
+typedef SparseMatrix<double>::Scalar Scalar;
 
 
 /// Return cotangent of (P,Q,R) corner (ie cotan of QP,QR angle).
@@ -106,7 +110,7 @@ void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, i
 		sm.setFromTriplets(coef.begin(), coef.end());
 		//sm.coeffRef(1,1) = 2;sm.coeffRef(2,2) = 3;//sm.coeffRef(0,0) = 1;
 		break;
-	case 4: //Mean_curvature		
+	case 3: //dcp			
 		for (int k = 0; k < nfaces; ++k)
 		{
 			int tmp = 3*k;
@@ -121,8 +125,11 @@ void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, i
 				coef.push_back(T(i,j,dtmp));
 			}			
 		}
-		sm.setFromTriplets(coef.begin(), coef.end());
-		//sm = sm + sm.transpose();		//todo
+		{
+			SparseMatrix<double> smtmp(nverts, nverts);
+			smtmp.setFromTriplets(coef.begin(), coef.end());
+			sm = SparseMatrix<double>(smtmp.transpose()) + smtmp;
+		}
 		break;
 	default:
 		stringstream ss("type: ");	 
@@ -212,8 +219,6 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 	SparseMatrix<double> sm(nverts, nverts);
 	perform_mesh_weight(verts, nverts, faces, nfaces, *type, vert_areas, sm);
 
-	typedef SparseMatrix<double>::Index Index;
-	typedef SparseMatrix<double>::Scalar Scalar;
 	Index* innerInd = sm.innerIndexPtr();
 	Index* outerInd = sm.outerIndexPtr();
 	Scalar* valuePtr = sm.valuePtr();

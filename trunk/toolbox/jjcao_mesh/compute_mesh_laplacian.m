@@ -23,10 +23,28 @@ function L = compute_mesh_laplacian(vertex,face,type,options)
 options.null = 0;
 normalize = getoptions(options, 'normalize', 0);
 symmetrize = getoptions(options, 'symmetrize', 1);
-
+use_c_implementation = getoptions(options, 'use_c_implementation', 1);
 % use fast C-coded version if possible
-if exist('perform_mesh_weight', 'file')~=0
-    W = perform_mesh_weight(vertex,face,type);
+if exist('perform_mesh_weight', 'file') && use_c_implementation
+    switch lower(type)
+    case {'combinatorial','graph'}
+        type = 0;
+    case 'distance'
+        type = 1;
+    case 'spring'
+        type = 2;        
+    case {'conformal','dcp'}
+        type = 3;
+    case {'mean_curvature', 'laplace-beltrami'}
+        type = 4;
+    case {'manifold-harmonic'}
+        type = 5;
+    case {'mvc'}
+        type = 6;
+    otherwise
+        error('Unknown type.')
+    end
+    W = perform_mesh_weight(vertex',face',type);
 else
     W = compute_mesh_weight(vertex,face,type,options);
 end
