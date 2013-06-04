@@ -6,6 +6,8 @@
 #include "glut/glut.h"
 #include <sstream>
 
+typedef Polyhedron::Point_3 Point3;
+
 void compute_bounding_box(Polyhedron &mesh, qglviewer::Vec &minv, qglviewer::Vec &maxv)
 {
 	if(mesh.empty())
@@ -114,6 +116,8 @@ void Viewer::computeShortestDistance()
 }
 Viewer::Viewer(QWidget *parent)  : QGLViewer(parent), flatShading_(false), frontFace_(true), pointSize_(0.1), showScalar_(false), wireframe_(false)
 {
+	picked_ = false;
+
 	scalarRange_[0] = 0; scalarRange_[1] = 1;
 
 	// The STEREO action is disabled
@@ -132,6 +136,7 @@ Viewer::Viewer(QWidget *parent)  : QGLViewer(parent), flatShading_(false), front
 void Viewer::init()
 {
 	setBackgroundColor(QColor(255,255,255));
+	//setManipulatedFrame(new ManipulatedFrame());
 }
 void drawSpiral()
 {
@@ -246,12 +251,33 @@ void Viewer::drawWithNames()
 	}
 	gluDeleteQuadric(pQuadric);
 }
+void Viewer::mouseMoveEvent(QMouseEvent *e)
+{	
+	if (picked_ && 
+		e->buttons() & Qt::RightButton &&
+		e->modifiers() & Qt::AltModifier
+		)
+	{
+		Polyhedron::Vertex_iterator vi = pickedVertices_.back();
+		Point3 p3 = vi->point();
+		Vec s3(p3.x(), p3.y(), p3.z());
+		Vec s2 = camera()->projectedCoordinatesOf(s3);
+		s2.x = e->pos().x();
+		s2.y = e->pos().y();
 
+		Vec ns3 = camera()->unprojectedCoordinatesOf(s2);
+		vi->point() = Point3(ns3.x, ns3.y, ns3.z);
+		updateGL();
+	}
+	else
+		QGLViewer::mouseMoveEvent(e);
+}
 void Viewer::postSelection(const QPoint& point)
 {
 	int choose = selectedName();
 	if ( choose == -1)
 	{
+		picked_ = false;
 		std::cout << "No vertex selected under pixel " << point.x()  << ","  << point.y() << std::endl;
 		return;
 	}
@@ -266,12 +292,17 @@ void Viewer::postSelection(const QPoint& point)
 			if ( it == pickedVertices_.end())
 			{
 				std::cout << "vertex: " << vi->point() << " added to picked vertices" << std::endl;
-				pickedVertices_.push_back(vi);					
+				pickedVertices_.push_back(vi);		
+
+				//ManipulatedFrame* mf = manipulatedFrame();
+				//mf->setPosition(vi->point().x(),vi->point().y(),vi->point().z());
+				picked_ = true;
 			}
 			else
 			{
 				std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
 				pickedVertices_.erase(it);
+				picked_ = false;
 			}
 			std::stringstream ss;	
 			ss << vi->index_ << "(" << vi->point().x() << ", " << vi->point().y() << ", "<< vi->point().z() << ") ";

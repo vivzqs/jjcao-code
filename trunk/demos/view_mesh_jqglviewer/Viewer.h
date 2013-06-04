@@ -8,6 +8,7 @@
 #include <fstream>
 
 #include <QGLViewer/qglviewer.h>
+using namespace qglviewer;
 
 class Viewer : public QGLViewer
 {
@@ -30,6 +31,7 @@ protected :
 	virtual void draw();
 	virtual void drawWithNames();
 	virtual void postSelection(const QPoint& point);
+	virtual void mouseMoveEvent (QMouseEvent *);
 	virtual void keyPressEvent(QKeyEvent *e);
 	virtual QString helpString() const;
 private:
@@ -42,6 +44,7 @@ private:
 	double pointSize_;
 	bool showScalar_;
 	double scalarRange_[2];
+	bool picked_;
 };
 
 #endif
