@@ -216,6 +216,33 @@ void drawVertices(std::list<Polyhedron::Vertex_iterator> &pickedVertices, double
 	else
 		glPolygonMode(GL_FRONT, GL_FILL);
 }
+void Viewer::drawSelectionRectangle() const
+{
+  startScreenCoordinatesSystem();
+  glDisable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  glColor4f(0.0, 0.0, 0.3f, 0.3f);
+  glBegin(GL_QUADS);
+  glVertex2i(rectangle_.left(),  rectangle_.top());
+  glVertex2i(rectangle_.right(), rectangle_.top());
+  glVertex2i(rectangle_.right(), rectangle_.bottom());
+  glVertex2i(rectangle_.left(),  rectangle_.bottom());
+  glEnd();
+
+  glLineWidth(2.0);
+  glColor4f(0.4f, 0.4f, 0.5f, 0.5f);
+  glBegin(GL_LINE_LOOP);
+  glVertex2i(rectangle_.left(),  rectangle_.top());
+  glVertex2i(rectangle_.right(), rectangle_.top());
+  glVertex2i(rectangle_.right(), rectangle_.bottom());
+  glVertex2i(rectangle_.left(),  rectangle_.bottom());
+  glEnd();
+
+  glDisable(GL_BLEND);
+  glEnable(GL_LIGHTING);
+  stopScreenCoordinatesSystem();
+}
 void Viewer::draw()
 {
 	if (mesh_.empty())	
@@ -223,6 +250,9 @@ void Viewer::draw()
 		drawSpiral();
 		return;
 	}
+
+	if (selectionMode_ == ADD)
+		drawSelectionRectangle();
 	
 	/////////////////////////////////////////////////////////////////////////
 	//draw faces
@@ -251,6 +281,15 @@ void Viewer::drawWithNames()
 	}
 	gluDeleteQuadric(pQuadric);
 }
+void Viewer::mousePressEvent(QMouseEvent* e)
+{
+	rectangle_ = QRect(e->pos(), e->pos());
+	if ((e->button() == Qt::LeftButton) && (e->modifiers() == Qt::ShiftModifier))
+		selectionMode_ = ADD;
+	else
+		QGLViewer::mousePressEvent(e);
+}
+
 void Viewer::mouseMoveEvent(QMouseEvent *e)
 {	
 	if (picked_ && 
@@ -269,29 +308,58 @@ void Viewer::mouseMoveEvent(QMouseEvent *e)
 		vi->point() = Point3(ns3.x, ns3.y, ns3.z);
 		updateGL();
 	}
+	else if( selectionMode_ == ADD && e->buttons() & Qt::LeftButton &&
+		e->modifiers() & Qt::ShiftModifier)
+	{
+		rectangle_.setBottomRight(e->pos());
+		updateGL();
+	}
 	else
 		QGLViewer::mouseMoveEvent(e);
 }
-void Viewer::postSelection(const QPoint& point)
+
+void Viewer::mouseReleaseEvent(QMouseEvent* e)
 {
-	int choose = selectedName();
-	if ( choose == -1)
+	if (selectionMode_ == ADD)
 	{
-		picked_ = false;
-		std::cout << "No vertex selected under pixel " << point.x()  << ","  << point.y() << std::endl;
-		return;
+		rectangle_ = rectangle_.normalized();
+		setSelectRegionWidth(rectangle_.width());
+		setSelectRegionHeight(rectangle_.height());
+		select(rectangle_.center());
+		updateGL();
+    }
+	else
+		QGLViewer::mouseReleaseEvent(e);
+}
+
+void Viewer::endSelection(const QPoint& point)
+{
+	glFlush();
+	GLint nbHits = glRenderMode(GL_RENDER);
+	
+	// Interpret results : each object created 4 values in the selectBuffer().
+	// (selectBuffer())[4*i+3] is the id pushed on the stack.
+	for (int i=0; i<nbHits; ++i)
+	{
+		addIdToSelection((selectBuffer())[4*i+3]);
 	}
 
+    selectionMode_ = NONE;
+//	QGLViewer::endSelection(point);
+
+}
+void Viewer::addIdToSelection(int id)
+{
 	for(Polyhedron::Vertex_iterator vi = mesh_.vertices_begin(); vi != mesh_.vertices_end(); ++vi)
 	{		
-		if ( vi->index_ == choose)
+		if ( vi->index_ == id)
 		{				
-			std::cout << "Picked vertex name is " << choose << std::endl;
+			//std::cout << "Picked vertex name is " << id << std::endl;
 					
 			std::list<Polyhedron::Vertex_iterator>::iterator it = std::find(pickedVertices_.begin(), pickedVertices_.end(), vi);
 			if ( it == pickedVertices_.end())
 			{
-				std::cout << "vertex: " << vi->point() << " added to picked vertices" << std::endl;
+				//std::cout << "vertex: " << vi->point() << " added to picked vertices" << std::endl;
 				pickedVertices_.push_back(vi);		
 
 				//ManipulatedFrame* mf = manipulatedFrame();
@@ -300,18 +368,58 @@ void Viewer::postSelection(const QPoint& point)
 			}
 			else
 			{
-				std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
+				//std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
 				pickedVertices_.erase(it);
 				picked_ = false;
 			}
-			std::stringstream ss;	
+			/*std::stringstream ss;	
 			ss << vi->index_ << "(" << vi->point().x() << ", " << vi->point().y() << ", "<< vi->point().z() << ") ";
 			QString str(ss.str().c_str());
-			emit vertsPicked(str);
+			emit vertsPicked(str);*/
 			break;
 		}
 	}
 }
+//void Viewer::postSelection(const QPoint& point)
+//{
+//	int choose = selectedName();
+//	if ( choose == -1)
+//	{
+//		picked_ = false;
+//		std::cout << "No vertex selected under pixel " << point.x()  << ","  << point.y() << std::endl;
+//		return;
+//	}
+//
+//	for(Polyhedron::Vertex_iterator vi = mesh_.vertices_begin(); vi != mesh_.vertices_end(); ++vi)
+//	{		
+//		if ( vi->index_ == choose)
+//		{				
+//			std::cout << "Picked vertex name is " << choose << std::endl;
+//					
+//			std::list<Polyhedron::Vertex_iterator>::iterator it = std::find(pickedVertices_.begin(), pickedVertices_.end(), vi);
+//			if ( it == pickedVertices_.end())
+//			{
+//				std::cout << "vertex: " << vi->point() << " added to picked vertices" << std::endl;
+//				pickedVertices_.push_back(vi);		
+//
+//				//ManipulatedFrame* mf = manipulatedFrame();
+//				//mf->setPosition(vi->point().x(),vi->point().y(),vi->point().z());
+//				picked_ = true;
+//			}
+//			else
+//			{
+//				std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
+//				pickedVertices_.erase(it);
+//				picked_ = false;
+//			}
+//			std::stringstream ss;	
+//			ss << vi->index_ << "(" << vi->point().x() << ", " << vi->point().y() << ", "<< vi->point().z() << ") ";
+//			QString str(ss.str().c_str());
+//			emit vertsPicked(str);
+//			break;
+//		}
+//	}
+//}
 void Viewer::keyPressEvent(QKeyEvent *e)
 {
 	// Get event modifiers key
