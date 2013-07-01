@@ -30,11 +30,18 @@ protected :
 	virtual void init();
 	virtual void draw();
 	virtual void drawWithNames();
-	virtual void postSelection(const QPoint& point);
+	//virtual void postSelection(const QPoint& point);
+	virtual void endSelection(const QPoint& point);
+
+	virtual void mousePressEvent(QMouseEvent *e);
 	virtual void mouseMoveEvent (QMouseEvent *);
+	virtual void mouseReleaseEvent(QMouseEvent *e);
+
 	virtual void keyPressEvent(QKeyEvent *e);
 	virtual QString helpString() const;
 private:
+	void addIdToSelection(int id);
+	void drawSelectionRectangle() const;
 private:
 	Polyhedron mesh_;
 	std::list<Polyhedron::Vertex_iterator> pickedVertices_;
@@ -45,6 +52,9 @@ private:
 	bool showScalar_;
 	double scalarRange_[2];
 	bool picked_;
+	enum SelectionMode { NONE, ADD, REMOVE };
+	SelectionMode selectionMode_;
+	QRect rectangle_;
 };
 
 #endif
