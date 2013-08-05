@@ -1,4 +1,5 @@
 mex mex/adjacency_matrix.cpp
+mex mex/minimaAndMaxima.cpp
 mex -largeArrayDims -I"../../include/eigen-3.1.3" mex/perform_mesh_weight.cpp
 
 %% geodesic
