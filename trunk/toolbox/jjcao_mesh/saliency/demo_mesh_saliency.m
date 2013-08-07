@@ -48,7 +48,6 @@ finalsalency = zeros(M.nverts,1);
 saliency = zeros(M.nverts,5);
 for i= 2:size(saliency,2)+1
     delta = i*eps;
-
     GaussWeighcurvature = compute_gaussian_weighted_curvature(M.verts,Cmean,delta,tree);%%%计算平均曲率高斯加权平均
 toc
     saliency(:,i-1) = GaussWeighcurvature(:,1) - GaussWeighcurvature(:,2);
