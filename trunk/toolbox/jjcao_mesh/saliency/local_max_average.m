@@ -2,6 +2,11 @@ function  localmax = local_max_average(saliency,Msalency, A)
 
 % A is adjacency matrix of faces
 %
+if exist('local_max_average_mex')~=0 %% adapted by jjcao
+    localmax = local_max_average_mex(saliency,Msalency, A);
+    return;
+end
+    
 localmax = 0;
 countindex = 0;
 
