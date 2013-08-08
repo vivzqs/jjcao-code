@@ -9,12 +9,10 @@ DEBUG=1;
 nface = size(faces,1);
 
 %% compute adjacency matrix by inner product of face normals
-options.verts=verts;
-options.with_edge=true;
 if USE_CONCAVE_WEIGHT
-    [A fverts E1 E2] = compute_dual_graph(faces,options); % adjacency matrix A, A(i,i)=0
+    [A fverts E1 E2] = compute_dual_graph(faces,verts, true); % adjacency matrix A, A(i,i)=0
 else
-    [A fverts] = compute_dual_graph(faces,options); % adjacency matrix A, A(i,i)=0
+    [A fverts] = compute_dual_graph(faces,verts, true); % adjacency matrix A, A(i,i)=0
 end
 if DEBUG
     figure('Name','Dual Graph'); set(gcf,'color','white');
