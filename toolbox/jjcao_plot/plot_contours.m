@@ -29,9 +29,9 @@ function [handle]=plot_contours(triang_faces,vertices,sf, options)
 % Copyright (c) 2009 jjcao, adapt from Dima Sorkin
 
 lineWidth = getoptions(options, 'lineWidth', 2);
+S.EdgeColor = getoptions(options, 'edgecolor', 'flat'); % 'black';
 S.LineWidth = lineWidth;
 S.CDataMapping = 'scaled';
-S.EdgeColor = 'flat';
 S.faces = [];
 S.vertices = [];
 

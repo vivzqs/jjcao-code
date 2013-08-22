@@ -7,7 +7,8 @@ mex -largeArrayDims -I"../../include/eigen-3.1.3" mex/perform_mesh_weight.cpp
 % geodesic 1: the speed is much faster than perform_front_propagation_mesh (geodesic 3), since it is shortest path distance rather than continuous
 % geodesic distance
 mex geodesic/mex/perform_dijkstra_propagation.cpp geodesic/mex/fheap/fib.cpp 
-movefile('perform_dijkstra_propagation.mexw32', 'geodesic/');
+if exist('perform_dijkstra_propagation.mexw32', 'file'); movefile('perform_dijkstra_propagation.mexw32', 'geodesic/'); end
+if exist('perform_dijkstra_propagation.mexw64', 'file'); movefile('perform_dijkstra_propagation.mexw64', 'geodesic/'); end
 
 % geodesic 2: 
 mex geodesic/mex/dijkstra.cpp 
@@ -20,8 +21,10 @@ if exist('dijkstra.mexmaci', 'file'); movefile('dijkstra.mexmaci', 'geodesic/per
 %% geodesic 3:
 mex geodesic/mex/perform_front_propagation_2d.cpp geodesic/mex/perform_front_propagation_2d_mex.cpp geodesic/mex/fheap/fib.cpp 
 mex geodesic/mex/perform_front_propagation_3d.cpp geodesic/mex/perform_front_propagation_3d_mex.cpp geodesic/mex/fheap/fib.cpp 
-movefile('perform_front_propagation_2d.mexw32', 'geodesic/');
-movefile('perform_front_propagation_3d.mexw32', 'geodesic/');
+if exist('perform_front_propagation_2d.mexw32', 'file');  movefile('perform_front_propagation_2d.mexw32', 'geodesic/');end;
+if exist('perform_front_propagation_2d.mexw64', 'file');  movefile('perform_front_propagation_2d.mexw64', 'geodesic/');end;
+if exist('perform_front_propagation_3d.mexw32', 'file');  movefile('perform_front_propagation_3d.mexw32', 'geodesic/');end;
+if exist('perform_front_propagation_3d.mexw64', 'file');  movefile('perform_front_propagation_3d.mexw64', 'geodesic/');end;
 %%
 basep = 'geodesic/mex/';
 disp('Compiling perform_front_propagation_mesh, might time some time.');
@@ -48,7 +51,8 @@ for i=1:length(files)
     str = [str basep files{i} ' '];
 end
 eval(str);
-movefile('perform_front_propagation_mesh.mexw32', 'geodesic/');
+if exist('perform_front_propagation_mesh.mexw32', 'file'); movefile('perform_front_propagation_mesh.mexw32', 'geodesic/');end
+if exist('perform_front_propagation_mesh.mexw64', 'file'); movefile('perform_front_propagation_mesh.mexw64', 'geodesic/');end
 
 %% geodesic 4: a newer version than geodesic 3 from the same author's svn. 
 % But I've not time to test it.
@@ -77,7 +81,8 @@ for i=1:length(files)
     str = [str basep files{i} ' '];
 end
 eval(str);
-movefile('AnisoEikonalSolverMesh.mexw32', 'geodesic/');
+if exist('AnisoEikonalSolverMesh.mexw32', 'file'); movefile('AnisoEikonalSolverMesh.mexw32', 'geodesic/');end
+if exist('AnisoEikonalSolverMesh.mexw64', 'file'); movefile('AnisoEikonalSolverMesh.mexw64', 'geodesic/');end
 
 % Connectivity matlab
 basep = 'geodesic/mex/';
@@ -105,18 +110,19 @@ for i=1:length(files)
     str = [str basep files{i} ' '];
 end
 eval(str)
-movefile('ComputeMeshConnectivity.mexw32', 'geodesic/');
+if exist('ComputeMeshConnectivity.mexw32', 'file'); movefile('ComputeMeshConnectivity.mexw32', 'geodesic/');end
+if exist('ComputeMeshConnectivity.mexw64', 'file'); movefile('ComputeMeshConnectivity.mexw64', 'geodesic/');end
 
 % Code on mesh grid with matlab connectivity
 basep = 'geodesic/mex/';
 disp('Compiling AnisoEikonalSolverMatlabMesh, might take no time :-P.');
 files =  { ...
     'AnisoEikonalSolverMatlabMesh.cpp'
-
 };
 str = 'mex '; % -v
 for i=1:length(files)
     str = [str basep files{i} ' '];
 end
 eval(str);
-movefile('AnisoEikonalSolverMatlabMesh.mexw32', 'geodesic/');
+if exist('AnisoEikonalSolverMatlabMesh.mexw32', 'file'); movefile('AnisoEikonalSolverMatlabMesh.mexw32', 'geodesic/');end
+if exist('AnisoEikonalSolverMatlabMesh.mexw64', 'file'); movefile('AnisoEikonalSolverMatlabMesh.mexw64', 'geodesic/');end
