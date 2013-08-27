@@ -36,8 +36,11 @@ if DEBUG
 end
 
 %% compute
+options = [];
+options.type = 'conformal';%combinatorial;conformal;%spring
+options.solver = 3;
 tic
-fid = compute_mesh_harmonic_field(verts, faces, constraint_id, constraint_value, 'conformal');%combinatorial;conformal;%spring
+fid = compute_mesh_harmonic_field(verts, faces, constraint_id, constraint_value, options.type, options);
 toc
 
 %% output & plot
