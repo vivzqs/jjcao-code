@@ -7,8 +7,8 @@ clear;clc;close all;
 %MYTOOLBOXROOT='E:/jjcaolib/toolbox';
 MYTOOLBOXROOT='../..';
 addpath ([MYTOOLBOXROOT '/jjcao_mesh'])
-addpath ([MYTOOLBOXROOT '/jjcao_mesh/io'])
-addpath ([MYTOOLBOXROOT '/jjcao_mesh/display'])
+addpath ([MYTOOLBOXROOT '/jjcao_io'])
+addpath ([MYTOOLBOXROOT '/jjcao_plot'])
 addpath ([MYTOOLBOXROOT '/jjcao_mesh/geodesic'])
 addpath ([MYTOOLBOXROOT '/jjcao_interact'])
 addpath ([MYTOOLBOXROOT '/jjcao_common'])

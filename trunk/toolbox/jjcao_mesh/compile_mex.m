@@ -6,7 +6,7 @@ mex -largeArrayDims -I"../../include/eigen-3.1.3" mex/perform_mesh_weight.cpp
 % there are three implementations as follows:
 % geodesic 1: the speed is much faster than perform_front_propagation_mesh (geodesic 3), since it is shortest path distance rather than continuous
 % geodesic distance
-mex geodesic/mex/perform_dijkstra_propagation.cpp geodesic/mex/fheap/fib.cpp 
+mex -largeArrayDims geodesic/mex/perform_dijkstra_propagation.cpp geodesic/mex/fheap/fib.cpp 
 if exist('perform_dijkstra_propagation.mexw32', 'file'); movefile('perform_dijkstra_propagation.mexw32', 'geodesic/'); end
 if exist('perform_dijkstra_propagation.mexw64', 'file'); movefile('perform_dijkstra_propagation.mexw64', 'geodesic/'); end
 
