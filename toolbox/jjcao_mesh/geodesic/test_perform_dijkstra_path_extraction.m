@@ -7,8 +7,8 @@ clear;clc;close all;
 %MYTOOLBOXROOT='E:/jjcaolib/toolbox';
 MYTOOLBOXROOT='../..';
 addpath ([MYTOOLBOXROOT '/jjcao_mesh'])
-addpath ([MYTOOLBOXROOT '/jjcao_mesh/io'])
-addpath ([MYTOOLBOXROOT '/jjcao_mesh/display'])
+addpath ([MYTOOLBOXROOT '/jjcao_io'])
+addpath ([MYTOOLBOXROOT '/jjcao_plot'])
 addpath ([MYTOOLBOXROOT '/jjcao_mesh/geodesic'])
 addpath ([MYTOOLBOXROOT '/jjcao_interact'])
 addpath ([MYTOOLBOXROOT '/jjcao_common'])
@@ -18,8 +18,9 @@ nverts = size(verts,1);
 A = triangulation2adjacency(faces,verts);
 
 start_points = 1;
-options.end_points = round(0.8 * nverts);
-[D,S] = perform_dijkstra(A, start_points, options);
+%options.end_points = round(0.8 * nverts);
+options.nb_iter_max = Inf;
+[D,S] = perform_dijkstra(A, start_points, options);% 64bit下的c++的结果错了，perform_dijkstra_propagation_slow还好用。
 path = perform_dijkstra_path_extraction(A,D,options.end_points);
 
 figure; set(gcf,'color','white');hold on;axis off; axis equal;    
