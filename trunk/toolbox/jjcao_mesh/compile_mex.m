@@ -1,3 +1,8 @@
+% compile_mex
+%
+%
+% Copyright (c) 2012 Junjie Cao
+
 mex mex/adjacency_matrix.cpp
 mex mex/minimaAndMaxima.cpp
 mex -largeArrayDims -I"../../include/eigen-3.1.3" mex/perform_mesh_weight.cpp
