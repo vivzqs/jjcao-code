@@ -1,4 +1,5 @@
 % test for heat diffusion on meshes
+addpath(genpath('..\..\..\'));
 
 % load mesh
 name = 'mushroom';
