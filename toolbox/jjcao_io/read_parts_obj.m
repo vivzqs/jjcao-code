@@ -1,11 +1,11 @@
-function parts = read_parts_obj(filename)
+function [parts, verts] = read_parts_obj(filename)
 
 % read_parts_obj - load a .obj file composed of multi parts.
 %
 %   parts = read_parts_obj(filename);
+%   verts: all the vertices for the obj
 %
 %   parts[i] is a part, composed of:
-%            verts  : 
 %            faces  : 
 %            name   :
 %
@@ -20,6 +20,7 @@ end
 %%
 parts = [];
 nparts = 0;
+verts = [];
 while 1
     s = fgetl(fid);
     if ~ischar(s), 
@@ -31,8 +32,7 @@ while 1
     k = strfind(s, '# Starting mesh');
     if ~isempty(k) % begin a part
         nparts = nparts + 1;
-        parts(nparts).name = s(length('# Starting mesh')+2:end);
-        verts = [];
+        parts(nparts).name = s(length('# Starting mesh')+2:end);        
         faces = [];
         while ischar(s)
             s = fgetl(fid);
@@ -43,8 +43,11 @@ while 1
                 verts(end+1,:) = sscanf(s(3:end), '%f %f %f');
             elseif strcmp(s(1:2), 'f ') % face
                 faces(end+1,:) = sscanf(s(3:end), '%d %d %d');
+            elseif strfind(s, '# End of mesh')
+                break;
             end
-        end        
+        end   
+        parts(nparts).faces = faces;
     end
    
 end
