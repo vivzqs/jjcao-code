@@ -8,6 +8,7 @@
 =================================================================*/
 
 #include <mex.h>
+#include <Eigen/Dense>
 #include <vector>
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
