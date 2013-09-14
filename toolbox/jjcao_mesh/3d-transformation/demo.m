@@ -47,12 +47,17 @@ plot_axis(centerAxis);
 
 %% rotate verts2 around centerAxis 
 line = [center coeff2(:,1)'];
-angle = pi;
+angle = pi*0.5;
 rot = createRotation3dLineAngle(line, angle);
 [axisR angle2] = rotation3dAxisAndAngle(rot);
 angle2
+rot1 = create_rotation3d_line_angle(center, coeff2(:,1)', angle);
+[axisR angle1] = rotation3dAxisAndAngle(rot1);
+angle1
 
 newvertices = transformPoint3d(vertices,rot);
+newvertices1 = transform_point3d(vertices,rot);
+
 newverts2 = newvertices(min(faces2):max(faces2),:);
 distance_between(verts1, newverts2)
 
