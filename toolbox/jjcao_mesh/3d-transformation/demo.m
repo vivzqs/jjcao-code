@@ -47,7 +47,7 @@ plot_axis(centerAxis);
 
 %% rotate verts2 around centerAxis 
 line = [center coeff2(:,1)'];
-angle = pi*0.5;
+angle = pi*1;
 rot = createRotation3dLineAngle(line, angle);
 [axisR angle2] = rotation3dAxisAndAngle(rot);
 angle2
