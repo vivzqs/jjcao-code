@@ -106,13 +106,24 @@ void array2eigen_matrix()
 	Eigen::MatrixXi mat223 = Eigen::Map<Eigen::MatrixXi>(data, 2, 2);
 	std::cout << mat223 << std::endl;
 
+}
+void vector_matrix()
+{
+	Eigen::MatrixXd verts(2,3);
+	verts << 0.20822,      0.12405,      0.87662,
+        0.207,      0.12458,      0.81992;
+	std::cout << verts << std::endl;
 
-	/////////////////////////
-	double *verts_;	
-	Eigen::MatrixXd verts = Eigen::Map<Eigen::MatrixXd>(verts_,2,3);
+	Eigen::Vector3d tmp = verts.row(1);
+	std::cout << tmp << std::endl;
+
+	verts.row(1) = Eigen::Vector3d(1,1,1);
+	std::cout << verts << std::endl;
+
 }
 int main()
 {
+	vector_matrix();
 	array2eigen_matrix();
 	eigen_matrix2array();
 
