@@ -1,4 +1,4 @@
-% demo_translation
+% demo_reflection
 %  
 %
 % Copyright (c) 2013 Junjie Cao
@@ -18,6 +18,7 @@ end
 %% display pair
 pair = [5, 8];
 [parts( pair(1)).name, '-', parts( pair(2)).name]
+
 faces1 = parts(pair(1)).faces;
 faces2 = parts(pair(2)).faces;
 verts1 = vertices(min(faces1):max(faces1),:);
@@ -30,12 +31,33 @@ set(h, 'FaceColor', 'b');
 scatter3(verts1(:,1),verts1(:,2), verts1(:,3),50,'g','filled');
 scatter3(verts2(:,1),verts2(:,2), verts2(:,3),50,'b','filled');
 
+c1 = mean(verts1);
+c2 = mean(verts2);
+c = 0.5*(c1+c2);
+line0 = createLine3d(c1, c2);
+drawLine3d(line0, 'b');
+scatter3(c(:,1),c(:,2), c(:,3),100,'r','filled');
 %%
-transVec = [1.20569, 0.0256928, -0.000555813];
-verts2new = verts2 + repmat(transVec, size(verts2,1), 1);
+center = [0.0011368, -0.00506687, 0.641914];
+normal = [0.999773, 0.021283, -3.70945e-05];
+plane0 = createPlane(center, normal);
+drawPlane3d(plane0, 'g');
+
+n2 = size(verts2,1);
+normalMat = repmat(normal,n2,1);
+centerMat = repmat(center,n2,1);
+len = 2*sum(normalMat.*(centerMat-verts2),2);
+verts2new = verts2 + repmat(len,1,3).*normalMat;
 scatter3(verts2new(:,1),verts2new(:,2), verts2new(:,3),100,'r','filled');
 
-[dist1, dist2] = dist_between_parts(verts1, verts2);
-(dist1+dist2)*0.5
+%% distance 
 [dist1, dist2] = dist_between_parts(verts1, verts2new);
 (dist1+dist2)*0.5
+
+p1 = min(verts1);
+p2 = max(verts1);
+sqrt( sum( (p1-p2).^2))
+
+p1 = min(verts2);
+p2 = max(verts2);
+sqrt( sum( (p1-p2).^2))
