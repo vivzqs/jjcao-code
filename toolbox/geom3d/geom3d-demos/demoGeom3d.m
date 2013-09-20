@@ -20,7 +20,8 @@ function demoGeom3d(varargin)
 % Created: 2009-06-22,    using Matlab 7.7.0.471 (R2008b)
 % Copyright 2009 INRA - Cepia Software Platform.
 
-
+clc;clear all;close all;
+addpath(genpath('../../'));
 %% Create points and lines
 
 % create some points: points are simply represented by a row vector of 3
@@ -52,7 +53,7 @@ drawPoint3d(points);
 drawLine3d(line12, 'color', 'k');
 
 % draw an edge, using a thick stroke and a different color
-drawEdge(edge13, 'color', 'r', 'linewidth', 2);
+drawEdge3d(edge13, 'color', 'r', 'linewidth', 2);
 
 
 %% Create planes
