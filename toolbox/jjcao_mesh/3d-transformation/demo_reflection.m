@@ -7,7 +7,7 @@ addpath(genpath('../../'));
 DEBUG = 1;
 
 %% input
-[parts, vertices]= read_parts_obj('bed4.obj');
+[parts, vertices]= read_parts_obj('cr1b.obj');
 if DEBUG
     figure('Name','input'); set(gcf,'color','white');hold on;
     for i=1:length(parts)
@@ -16,7 +16,7 @@ if DEBUG
     set(h, 'edgecolor', 'none');colormap jet(256); axis off; axis equal; mouse3d;
 end
 %% display pair
-pair = [5, 8];
+pair = [4, 5];
 [parts( pair(1)).name, '-', parts( pair(2)).name]
 
 faces1 = parts(pair(1)).faces;
@@ -40,6 +40,9 @@ scatter3(c(:,1),c(:,2), c(:,3),100,'r','filled');
 %%
 center = [0.0011368, -0.00506687, 0.641914];
 normal = [0.999773, 0.021283, -3.70945e-05];
+v1 = [-0.0031464717185976042,0.0031905399499505566,-0.99998996003487550];
+v2 = [0.00015592593412902699,0.0032152731115763209,-0.99999481883953822];
+
 plane0 = createPlane(center, normal);
 drawPlane3d(plane0, 'g');
 
