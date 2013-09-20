@@ -7,15 +7,15 @@ addpath(genpath('../../'));
 DEBUG = 1;
 
 %% input
-[parts, vertices]= read_parts_obj('SimpleChair1.obj');
+[parts, vertices]= read_parts_obj('CR1b.obj');
 figure('Name','input'); set(gcf,'color','white');hold on;
-for i=1:length(parts)
-    h=trisurf(parts(i).faces,vertices(:,1),vertices(:,2),vertices(:,3), 'FaceVertexCData', vertices(:,3));     
-end
-set(h, 'edgecolor', 'none');colormap jet(256); axis off; axis equal; mouse3d;
+% for i=1:length(parts)
+%     h=trisurf(parts(i).faces,vertices(:,1),vertices(:,2),vertices(:,3), 'FaceVertexCData', vertices(:,3));     
+% end
+% set(h, 'edgecolor', 'none');colormap jet(256); axis off; axis equal; mouse3d;
 
 %% display pair
-pair = [7, 8];
+pair = [2, 3];
 faces1 = parts(pair(1)).faces;
 faces2 = parts(pair(2)).faces;
 verts1 = vertices(min(faces1):max(faces1),:);
