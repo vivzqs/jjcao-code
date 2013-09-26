@@ -5,7 +5,9 @@
 %
 % Copyright (c) 2012 JJCAO
 %% initialize & read mesh
-setup;
+clear;clc;close all;
+addpath(genpath('../../'));
+
 tau = 1.2;% options for display
 test_file = {[MYTOOLBOXROOT 'data/cube_602.off'],[MYTOOLBOXROOT 'data/fandisk.off'],[MYTOOLBOXROOT 'data/100.off'],'E:\jjcao_data\MeshsegBenchmark-1.0\data\off\99.off'};
 filename = test_file{4};

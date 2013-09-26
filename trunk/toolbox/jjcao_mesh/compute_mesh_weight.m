@@ -1,4 +1,4 @@
-function W = compute_mesh_weight(vertices,faces,type,options)
+function W = compute_mesh_weight(vertices,faces, type,options)
 
 % compute_mesh_weight - compute a weight matrix
 %
@@ -7,9 +7,6 @@ function W = compute_mesh_weight(vertices,faces,type,options)
 %   W is sparse weight matrix and W(i,j)=0 is vertex i and vertex j are not
 %   connected in the mesh.
 %
-%   todo:
-%       1. validate spring weights
-%       2. add Mean_curvature weights
 %   type is either 
 %       'combinatorial': W(i,j)=1 is vertex i is conntected to vertex j.
 %       'distance': W(i,j) = 1/d_ij^2 where d_ij is distance between vertex
@@ -33,6 +30,9 @@ function W = compute_mesh_weight(vertices,faces,type,options)
 %
 %       'mvc': W(i,j) = [tan(/_kij/2)+tan(/_jil/2)]/d_ij where /_kij and /_jil are angles at i
 %
+%        'Mean_curvature' or 'Laplace-Beltrami'or 'Manifold-harmonic' can
+%        be built on result of 'conformal' or 'dcp'. so we do not present
+%        them here.
 %   If options.ring is offered, the computation of it can be avoided.
 %
 %   Add spring and mvc weight (JJCAO, 2009)
@@ -70,8 +70,8 @@ switch lower(type)
             rings = compute_vertex_face_ring(faces);
         end
         switch lower(type)
-        case {'conformal','dcp'} % conformal laplacian  
-            W = compute_mesh_weight_dcp(vertices, faces, rings, verb);                  
+        case {'conformal','dcp'} % conformal laplacian              
+            W = compute_mesh_weight_dcp(vertices, faces, rings,verb);                 
         case 'mvc'% mvc laplacian
             W = sparse(n,n);
             for i = 1:n

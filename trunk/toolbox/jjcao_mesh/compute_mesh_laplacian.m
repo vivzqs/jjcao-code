@@ -17,37 +17,47 @@ function L = compute_mesh_laplacian(vertex,face,type,options)
 %
 %   See also compute_mesh_weight.
 %
-%   Changed default value for normalize from 1 to 0 (JJCAO)
+%   Changed by JJCAO
 %   Copyright (c) 2007 Gabriel Peyre
 
 options.null = 0;
 normalize = getoptions(options, 'normalize', 0);
 symmetrize = getoptions(options, 'symmetrize', 1);
-use_c_implementation = getoptions(options, 'use_c_implementation', 1);
-% use fast C-coded version if possible
-if exist('perform_mesh_weight', 'file') && use_c_implementation
-    switch lower(type)
+ttype = type;
+switch lower(type)
     case {'combinatorial','graph'}
-        type = 0;
+        ntype = 0;
     case 'distance'
-        type = 1;
+        ntype = 1;
     case 'spring'
-        type = 2;        
-    case {'conformal','dcp'}
-        type = 3;
-    case {'mean_curvature', 'laplace-beltrami'}
-        type = 4;
-    case {'manifold-harmonic'}
-        type = 5;
+        ntype = 2;        
+    case {'conformal','dcp','mean_curvature', 'laplace-beltrami','manifold-harmonic'}
+        ntype = 3;      
+        ttype = 'dcp';
     case {'mvc'}
-        type = 6;
+        ntype = 6;
     otherwise
         error('Unknown type.')
-    end
-    W = perform_mesh_weight(vertex',face',type);
-else
-    W = compute_mesh_weight(vertex,face,type,options);
 end
+    
+use_c_implementation = getoptions(options, 'use_c_implementation', 1);% use fast C-coded version if possible
+if exist('perform_mesh_weight', 'file') && use_c_implementation
+    W = perform_mesh_weight(vertex',face',ntype, options);
+else
+    W = compute_mesh_weight(vertex,face,ttype,options);
+end
+
+switch lower(type)
+    case {'mean_curvature', 'laplace-beltrami'}
+        vert_areas = vertex_area(vertex,face);
+        W = diag(vert_areas)*W;
+    case {'manifold-harmonic'}
+        vert_areas = vertex_area(vertex,face);
+        [I,J,V]  = find(W);
+        V = V ./ sqrt(vert_areas(I).*vert_areas(J));
+        W = sparse(I,J,V);
+end    
+%%
 n = size(W,1);
 if symmetrize==1 && normalize==0
     L = diag(sum(W,2)) - W;

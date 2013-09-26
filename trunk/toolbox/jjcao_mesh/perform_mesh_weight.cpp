@@ -27,20 +27,18 @@
 			%           Refer to Spectral Geometry Processing with Manifold Harmonics_08
 			%       6: 'mvc': W(i,j) = [tan(/_kij/2)+tan(/_jil/2)]/d_ij where /_kij and /_jil are angles at i
 		options.?:
-          
+*
+*           4 or 5 can be built on 3 in matlab.          
+*           just 0 & 3 are handled here. 1, 2 and 6 are left as todo.
 *
 * JJCAO, 2013
 *
 *=================================================================*/
 
 #include <mex.h>
-#include <string>
-#include <sstream>
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 #include <vector>
-#include <algorithm> 
-#include <iostream>
 
 using namespace Eigen;
 using namespace std;
@@ -87,16 +85,41 @@ double cotangent(const Vector3d& P,
 //        return 0.0; // undefined
 //}
 
-void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, int type, double *vert_areas, SparseMatrix<double>& sm)
+void compute_dcp_weight(double* verts, double* faces, int nverts, int nfaces, SparseMatrix<double>& sm)
 {
-	int tmp;
 	int i,j,m;
 	double dtmp;
 	std::vector<T> coef(nverts*6);	
+	for (int k = 0; k < nfaces; ++k)
+	{
+		int tmp = 3*k;
+		int face[3] = {faces[tmp],faces[tmp+1],faces[tmp+2]};			
+		for (int l = 0; l < 3; ++l)
+		{
+			i = face[l]; j = face[(l+1)%3]; m = face[(l+2)%3];
+			Vector3d p(verts[3*i],verts[3*i+1],verts[3*i+2]);
+			Vector3d q(verts[3*m],verts[3*m+1],verts[3*m+2]);
+			Vector3d r(verts[3*j],verts[3*j+1],verts[3*j+2]);
+			dtmp = 0.5*cotangent(p, q, r);
+			coef.push_back(T(i,j,dtmp));
+		}			
+	}
+	{
+		SparseMatrix<double> smtmp(nverts, nverts);
+		smtmp.setFromTriplets(coef.begin(), coef.end());
+		sm = SparseMatrix<double>(smtmp.transpose()) + smtmp;
+	}
+}
+
+void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, int type, double *vert_areas, SparseMatrix<double>& sm)
+{	
 	switch(type)
 	{
 	case 0: //'combinatorial' or 'graph'
 		// 不能处理开网格
+		{
+		int i,j;	
+		std::vector<T> coef(nverts*6);	
 		for (int k = 0; k < nfaces; ++k)
 		{
 			int tmp = 3*k;
@@ -109,28 +132,25 @@ void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, i
 		}
 		sm.setFromTriplets(coef.begin(), coef.end());
 		//sm.coeffRef(1,1) = 2;sm.coeffRef(2,2) = 3;//sm.coeffRef(0,0) = 1;
-		break;
-	case 3: //dcp			
-		for (int k = 0; k < nfaces; ++k)
-		{
-			int tmp = 3*k;
-			int face[3] = {faces[tmp],faces[tmp+1],faces[tmp+2]};			
-			for (int l = 0; l < 3; ++l)
-			{
-				i = face[l]; j = face[(l+1)%3]; m = face[(l+2)%3];
-				Vector3d p(verts[3*i],verts[3*i+1],verts[3*i+2]);
-				Vector3d q(verts[3*m],verts[3*m+1],verts[3*m+2]);
-				Vector3d r(verts[3*j],verts[3*j+1],verts[3*j+2]);
-				dtmp = 0.5*cotangent(p, q, r);
-				coef.push_back(T(i,j,dtmp));
-			}			
-		}
-		{
-			SparseMatrix<double> smtmp(nverts, nverts);
-			smtmp.setFromTriplets(coef.begin(), coef.end());
-			sm = SparseMatrix<double>(smtmp.transpose()) + smtmp;
 		}
 		break;
+	case 3: //'conformal' or 'dcp'		
+		compute_dcp_weight(verts, faces, nverts, nfaces, sm);
+		break;
+	//case 4: // 'Mean_curvature' or 'Laplace-Beltrami'	
+	//	//if (vert_areas == 0)
+	//	//{
+	//	//	stringstream ss("options.vert_areas is not offered! ");	 
+	//	//	mexErrMsgTxt(ss.str().c_str());
+	//	//}
+	//	compute_dcp_weight(verts, faces, nverts, nfaces, sm);
+	//	//{
+	//	//	for ( int i = 0; i < sm.rows(); ++i)
+	//	//	{
+	//	//		sm.row(i) = sm.row(i) * (1.0/vert_areas[i]);
+	//	//	}
+	//	//}
+	//	break;
 	default:
 		stringstream ss("type: ");	 
 		ss << type << " is not supported!";
@@ -139,33 +159,7 @@ void perform_mesh_weight(double* verts, int nverts, double *faces, int nfaces, i
 
 	sm.makeCompressed();
 }
-//void perform_mesh_weight_dense_matrix(double* verts, int nverts, double *faces, int nfaces, int type, double *vert_areas, double *L)
-//{
-//	//coeff
-//	int tmp;
-//	int i,j;
-//	switch(type)
-//	{
-//	case 0:
-//		for (int k = 0; k < nfaces; ++k)
-//		{
-//			int tmp = 3*k;
-//			int face[3] = {faces[tmp],faces[tmp+1],faces[tmp+2]};			
-//			for (int l = 0; l < 3; ++l)
-//			{
-//				i = face[l]; j = face[(l+1)%3];
-//				L[i+nverts*j] = 1;
-//			}			
-//		}
-//		break;
-//	//case 4:
-//	//	break;
-//	default:
-//		stringstream ss("type: ");	 
-//		ss << type << " is not supported!";
-//		mexErrMsgTxt(ss.str().c_str());
-//	}
-//}
+
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 {
 	///////////// Error Check
@@ -207,7 +201,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 			// options.vert_areas: 1*nverts
 			tmp = mxGetField(options,0,"vert_areas");
 			if (tmp)
-				vert_areas = mxGetPr(tmp);
+				vert_areas = mxGetPr(tmp);// not used!
 			//mexPrintf("%f, %f, %f\n", vert_areas[0],vert_areas[1],vert_areas[2]);	
 		}
 	}
