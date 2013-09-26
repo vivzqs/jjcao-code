@@ -3,8 +3,9 @@
 % if nargin < 1
 %     fid = 1;
 % end
-clear all;
-%close all;
+clear;clc;close all;
+addpath(genpath('../../'));
+
 %% test 1, 1-ring vertices of center vertex are co-planar. Dcp has no
 %% tangential component, and Combinatorial has tangential component.
 fid = 2;

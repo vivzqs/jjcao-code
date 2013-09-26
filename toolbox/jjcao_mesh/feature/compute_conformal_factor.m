@@ -15,23 +15,23 @@ else
 end
 
 if isfield(options, 'Cgauss')
-    cs_orig = options.Cgauss;
+    K_orig = options.Cgauss;
 else
-    cs_orig = compute_gaussian_curvature(vertices, faces, options);%Gaussian curvature of original mesh
+    K_orig = compute_gaussian_curvature(vertices, faces, options);%Gaussian curvature of original mesh
 end
 
-c_orig = sum(cs_orig);
-area_t = compute_area_faces(vertices, faces);%total area;
-cs_t = c_orig*areas_ring/(3*area_t); % this may be not precise, barycenter neighbor area is better %todo
+c_orig = sum(K_orig);
+faces_area = compute_area_faces(vertices, faces);
+total_area = sum(faces_area);%total area;
+K_t = c_orig*areas_ring/(3*total_area); 
 
-%% ////////////////////////////////////////////////////////////////////////
-% solve conformal factor phi (L*phi = cs_t - cs_orig)
+%% solve conformal factor phi (L*phi = K_t - K_orig)
 type = 'Laplace-Beltrami'; % the other choice is 'combinatorial', 'distance', spring, 'Laplace-Beltrami', mvc, 
 options.normalize = 0; options.symmetrize = 1;
 L = compute_mesh_laplacian(vertices,faces, type,options);
-b = cs_t - cs_orig;
-%b = abs(cs_t - cs_orig); %有找对称轴的效果
-%b = abs(abs(cs_t) - abs(cs_orig));%有找1/4部分的效果
+b = K_t - K_orig;
+%b = abs(K_t - K_orig); %有找对称轴的效果
+%b = abs(abs(K_t) - abs(K_orig));%有找1/4部分的效果
 phi = L\b;
 %phi = L * phi;
 
@@ -52,7 +52,7 @@ options.conformal_factors = phi;
 cs_computed = compute_gaussian_curvature(vertices, faces, options);
 
 figure('Name','Difference of Gaussian curvature (target - computed)');%hold on;
-error = abs(cs_t - cs_computed);
+error = abs(K_t - cs_computed);
 error(error==Inf) = 0;
 %minv = min(error); maxv = max(error);
 %error = (error-minv)/(maxv-minv);

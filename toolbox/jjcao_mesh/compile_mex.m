@@ -5,11 +5,13 @@
 
 mex adjacency_matrix.cpp
 mex minimaAndMaxima.cpp
+% mex -g -largeArrayDims -I"../../include/eigen-3.1.3" vertex_area.cpp
+mex -largeArrayDims -I"../../include/eigen-3.1.3" vertex_area.cpp
 mex -largeArrayDims -I"../../include/eigen-3.1.3" perform_mesh_weight.cpp
 mex -largeArrayDims -I"../../include/eigen-3.1.3" 3d-transformation/create_rotation3d_line_angle.cpp
 if exist('create_rotation3d_line_angle.mexw64', 'file'); movefile('create_rotation3d_line_angle.mexw64', '3d-transformation/'); end
 
-mex -g -largeArrayDims -I"../../include/eigen-3.1.3" 3d-transformation/transform_point3d.cpp
+mex -largeArrayDims -I"../../include/eigen-3.1.3" 3d-transformation/transform_point3d.cpp
 if exist('transform_point3d.mexw64', 'file'); movefile('transform_point3d.mexw64', '3d-transformation/'); end
 %% geodesic
 % there are three implementations as follows:
