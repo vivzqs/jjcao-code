@@ -1,4 +1,4 @@
-function eg_compute_conformal_factors(file,type)
+%function eg_compute_conformal_factors(file,type)
 % eg_compute_conformal_factors - example for computing conformal factors on a mesh
 %
 %   [] = eg_compute_conformal_factors(file);
@@ -14,8 +14,10 @@ clear options;
 if nargin < 1
     clear;clc;close all;
     addpath(genpath('../../'));
-    file = 'armadillo_v4326.off';
-    file = 'wolf0.off';
+%     file = 'armadillo_v4326.off';
+%     file = 'wolf2.off';
+%     file = 'cat5.off';    
+    file = 'lion_head.off';    
 %     file = 'catHead_v131.off';
 end
 
@@ -43,27 +45,21 @@ minv = min(phi); maxv = max(phi);
 
 ext = minIdx;
 ev = phi(ext);
-% threshold = min(ev) + (max(ev)-min(ev))*0.5;
-% ext = ext(find(ev<threshold));
+threshold = min(ev) + (max(ev)-min(ev))*0.95;
+ext = ext(find(ev<threshold));
 
 % ext = maxIdx;
 % ev = phi(ext);
 % threshold = min(ev) + (max(ev)-min(ev))*0.5;
 % ext = ext(find(ev>threshold));
 
-ev = (ev-minv)/(maxv-minv);
 sprintf('num of extrema: %d\n',length(ext))
 
 %% display 
-figure('Name','Conformal Factor');%hold on;
 col = (phi-minv)/(maxv-minv);
 %col(col==Inf) = 0;
-options.face_vertex_color = col;
-%options.edge_color = [1 1 1]*0;% for black
-h = plot_mesh(verts, faces, options);
-set(h, 'edgecolor', 'none');
-colormap jet(256);
-hold on;
+options.figname='Conformal factor by normal cycle';options.position='southwest';
+plot_mesh_scalar(verts, faces, col, options);hold on;
 
 % display contour
 options.values = 0:0.05:1;
@@ -74,6 +70,6 @@ view3d ROT;
 % display minimal extrema
 verts = verts';ext = ext';
 h = plot3(verts(1,ext),verts(2,ext), verts(3,ext), 'r.');
-set(h, 'MarkerSize', 25);
+set(h, 'MarkerSize', 100);
 verts = verts';ext = ext';
-hold off;
+hold on;
