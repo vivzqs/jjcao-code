@@ -6,11 +6,13 @@ clear;clc;close all;
 addpath(genpath('../../'));
 
 tau = 1.2;% options for display
-test_file = {'data/cube_602.off','data/fandisk.off', 'data/wolf0.off','E:\jjcao_data\MeshsegBenchmark-1.0\data\off\99.off'};
+test_file = {'data/cube_602.off','data/armadillo_v502.off', 'data/armadillo_v4326.off','data/657_7k.off', 'data/wolf0.off','data/dancer_v5k.off'};
 filename = test_file{3};
 [verts,faces] = read_mesh(filename);
+
+options.bsaturate = 1;
 %% curvature by angle defect & corresponding conformal factor
-Cgauss = compute_angel_defect(verts, faces);
+Cgauss = compute_angle_defect(verts, faces);
 options.figname='Cgauss by angle defect';options.position='northwest';
 plot_mesh_scalar(verts, faces, Cgauss, options);
 

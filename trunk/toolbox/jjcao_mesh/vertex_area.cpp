@@ -48,6 +48,7 @@ void compute_vertex_area_fast(Eigen::MatrixXd& V, Eigen::MatrixXd& F, double* va
 }
 void compute_vertex_voronoi_area(Eigen::MatrixXd& V, Eigen::MatrixXd& F, double* va)
 {
+	mexErrMsgTxt("not implemented still !");
 }
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 {

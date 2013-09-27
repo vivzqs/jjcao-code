@@ -1,9 +1,9 @@
-function Cgauss = compute_angel_defect(vertices, faces, options)
-% compute_angel_defect - compute Gaussian curvature of a mesh
+function Cgauss = compute_angle_defect(vertices, faces, options)
+% compute_angle_defect - compute Gaussian curvature of a mesh
 %
-%   Cgauss = compute_angel_defect(vertices, faces, options);
+%   Cgauss = compute_angle_defect(vertices, faces, options);
 %
-%   options.type = 'angle_defect', Reffer to Discrete differential geometry
+%   options.type = 'angle_defect', Reffer to Formular 9 of Discrete differential geometry
 %   operators for triangulated 2-manifolds_02
 %
 %   changed by jjcao, 2012
@@ -26,12 +26,12 @@ else
 end
        
 if isfield(options, 'conformal_factors')
-    Cgauss = compute_angel_defect2(vertices, faces, boundary, rings, options.conformal_factors);
+    Cgauss = compute_angle_defect2(vertices, faces, boundary, rings, options.conformal_factors);
 else
-    Cgauss = compute_angel_defect1(vertices, faces, boundary, rings);
+    Cgauss = compute_angle_defect1(vertices, faces, boundary, rings);
 end
 
-function Cgauss = compute_angel_defect1(vertices, faces, boundary, rings)
+function Cgauss = compute_angle_defect1(vertices, faces, boundary, rings)
 n = length(vertices);
 is_boundary = zeros(n, 1);
 Cgauss = is_boundary;
@@ -67,7 +67,13 @@ for i = 1:n
     end
 end
 
-function Cgauss = compute_angel_defect2(vertices, faces, boundary, rings, conformal_factors)
+% compute the cgauss after scaling by conform factor
+% 
+%
+% refer to: Conformal Flattening by Curvature Prescription and Metric Scaling_08
+%
+%
+function Cgauss = compute_angle_defect2(vertices, faces, boundary, rings, conformal_factors)
 n = length(vertices);
 is_boundary = zeros(n, 1);
 Cgauss = is_boundary;

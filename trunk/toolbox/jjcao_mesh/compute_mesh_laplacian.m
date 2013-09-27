@@ -1,4 +1,4 @@
-function L = compute_mesh_laplacian(vertex,face,type,options)
+function [L, D, W] = compute_mesh_laplacian(vertex,face,type,options)
 
 % compute_mesh_laplacian - compute a laplacian matrix L, L = -(Laplacian operator).
 %
@@ -58,13 +58,13 @@ switch lower(type)
         W = sparse(I,J,V);
 end    
 %%
-n = size(W,1);
+D = diag(sum(W,2));
 if symmetrize==1 && normalize==0
-    L = diag(sum(W,2)) - W;
+    L = D - W;
 elseif symmetrize==1 && normalize==1
-    L = speye(n) - diag(sum(W,2).^(-1/2)) * W * diag(sum(W,2).^(-1/2));
+    L = speye(n) - D.^(-1/2) * W * D.^(-1/2);
 elseif symmetrize==0 && normalize==1
-    L = speye(n) - diag(sum(W,2).^(-1)) * W;
+    L = speye(n) - D.^(-1) * W;
 else
     error('Does not work with symmetrize=0 and normalize=0');    
 end
