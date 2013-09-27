@@ -10,10 +10,12 @@ for i=1:size(faces,1)
 end
 
 ifscmd = 'indexedfaceset(vertices,F)';
-for i = 1:length(varargin)
-    ifscmd = [ifscmd ',varargin{' num2str(i) '}'];
+if ~isempty(varargin)
+    for i = 1:length(varargin)
+        ifscmd = [ifscmd ',varargin{' num2str(i) '}'];
+    end
+    ifscmd = [ifscmd ')'];
 end
-ifscmd = [ifscmd ')'];
 
 Mifs = eval(ifscmd);
 Mhe = halfedge(Mifs);

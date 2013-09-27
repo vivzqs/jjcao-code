@@ -15,5 +15,7 @@ end
 
 figure('name',figname);movegui(position);set(gcf,'color','white');hold on;
 plot_mesh(verts,faces, options);
-shading interp; camlight; colormap jet(256);
+shading interp; camlight; colorbar;
+% colormap hsv(256);
+colormap jet(256);
 % saveas(gcf, [rep name '-cmax.png'], 'png');

@@ -18,7 +18,7 @@ switch lower(options.type)
     case {'normal_cycles','normal cycles', 'normal_cycle', 'normal cycle'}
         [Umin,Umax,Cmin,Cmax,Cmean,Cgauss,Normal] = compute_curvature(vertices,faces,options);        
     case {'angle_defect', 'angle defect'}
-        Cgauss = compute_angel_defect(vertices, faces, options);
+        Cgauss = compute_angle_defect(vertices, faces, options);
     otherwise
         disp('Unknown method.')
 end
