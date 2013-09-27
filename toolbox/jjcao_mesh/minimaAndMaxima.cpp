@@ -1,6 +1,6 @@
 /*=================================================================
 * Compute the minimal and maximal index of the mesh given a function
-
+ * mex version of extrema.m
 *
 * This is a MEX-file for MATLAB.  
 * Hui Wang, Mar. 24, 2009, wanghui19841109@163.com 
