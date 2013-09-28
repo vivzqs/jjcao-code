@@ -54,6 +54,7 @@ end
 
 %% compute WKS 
 num_vertices = size(PHI,1);
+nWKS = min (size(PHI,2), nWKS);
 WKS=zeros(num_vertices,nWKS);
 
 log_E=log(max(abs(E),1e-6))';
