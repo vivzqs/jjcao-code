@@ -4,16 +4,11 @@
 %
 % Copyright (c) 2013 Junjie Cao
 
-clear;clc;close all;
-%MYTOOLBOXROOT='E:/jjcaolib/toolbox';
-MYTOOLBOXROOT='../';
-addpath ([MYTOOLBOXROOT 'jjcao_mesh'])
-addpath ([MYTOOLBOXROOT 'jjcao_io'])
-addpath ([MYTOOLBOXROOT 'jjcao_interact'])
-addpath ([MYTOOLBOXROOT 'jjcao_common'])
+clc;clear all;close all;
+addpath(genpath('../'));
 
 %% load a mesh
-test_file = {[MYTOOLBOXROOT '/data/fandisk.off'],[MYTOOLBOXROOT '/data/wolf0.off'],[MYTOOLBOXROOT '/data/catHead_v131.off']};
+test_file = {['/data/fandisk.off'],['/data/wolf0.off'],[ '/data/catHead_v131.off']};
 M.filename = test_file{3};
 [M.verts,M.faces] = read_mesh(M.filename);
 M.nverts = size(M.verts,1);
