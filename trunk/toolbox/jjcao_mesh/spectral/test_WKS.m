@@ -18,7 +18,6 @@ adjustL = false;
 
 %% WKS
 tic
-scale = true;
 M.wks = WKS(M.eigvector, M.eigvalue);
 toc
 
