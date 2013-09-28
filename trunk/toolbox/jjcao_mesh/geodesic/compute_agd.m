@@ -1,4 +1,4 @@
-function [agd,landmark,cellArea,faceIndex,Q]=compute_agd(verts,faces,nbr_landmarks,normalize, DEBUG)
+function [agd,landmark,cellArea,faceIndex,Q]=compute_agd(verts,faces,nbr_landmarks,DEBUG,normalize)
 % Compute average geodesic distance(agd) of surface,Based on the paper "Topology Matching for Fully Automatic Similarity 
 % Estimation of 3D Shapes",but different in computing b_i and area(b_i).
 %
@@ -9,24 +9,34 @@ function [agd,landmark,cellArea,faceIndex,Q]=compute_agd(verts,faces,nbr_landmar
 % 
 % Input: verts
 %        faces
-%        nbr_landmark， the number of landmarks;
-%        normalize，1，normalize agd to 0-1；0,otherwise; default is 0;
-%        DEBUG， 1,view the voronoi cells and agd cells; 0,otherwise; default is 0;
+%        nbr_landmark， the number of landmarks
+%        DEBUG， 1,view the voronoi cells and agd cells; 0,otherwise;
+%        normalize，1，normalize agd to 0-1；0,otherwise
          
 % Output: agd
 %         landmark, the index of b={b_1,...,b_n)}
 %         cellArea, the area of b={b_1,...,b_n)}
 %         faceIndex, the agd cell number of the faces
 %         Q, the voronoi cell number of the verts
+% 
+% Pipeline：
+% 1. 计算采样点landmark
+% 1.1 调用perform_farthest_point_sampling_mesh.m
+% 2. 计算voronoi patch，得到每个点属于哪一个采样点Q
+% 2.1 调用 computer_voronoi_mesh 该函数又调用
+% 2.1.1 check_face_vertex.m 和 perform_fast_marching_mesh.m
+% 3. 计算 faceIndex，得到每个面属于那个采样点
+% 4. 计算cellArea,得到每个采样点对应的cell的面积
+% 5. 计算agd(v)=sum｛g(v,b_i)*area(b_i)｝
 %
 % Copyright (c) 2013 Shuhua Li, Junjie Cao
 
 if nargin < 4
+    DEBUG = 0;
     normalize = 0;
 end
-
 if nargin < 5
-    DEBUG = 0;
+    normalize = 0;
 end
 
 %% compute voronoi mesh
