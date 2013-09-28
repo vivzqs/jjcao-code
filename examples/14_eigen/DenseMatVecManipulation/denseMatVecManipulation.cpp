@@ -90,11 +90,11 @@ void eigen_matrix2array()
 void array2eigen_matrix()
 {
 	//int data[] = {1,2,3,4};
-	int *data = new int[4];
-	//for ( int i = 0; i < 4; ++i)
-	//{
-	//	data[i] = i;
-	//}
+	double *data = new double[4];
+	for ( int i = 0; i < 4; ++i)
+	{
+		data[i] = i;
+	}
 	Eigen::Matrix2i mat221(data);
 	mat221.coeffRef(0,0) = 1;
 	mat221.coeffRef(0,1) = 2;
@@ -118,6 +118,7 @@ void vector_matrix()
 	std::cout << tmp << std::endl;
 
 	verts.row(1) = Eigen::Vector3d(1,1,1);
+	verts.row(1) = verts.row(1) * 2;
 	std::cout << verts << std::endl;
 
 }
