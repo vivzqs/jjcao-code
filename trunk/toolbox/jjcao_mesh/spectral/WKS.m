@@ -53,9 +53,7 @@ if nargin < 4
 end
 
 %% compute WKS 
-
-fprintf('Computing WKS...');
-
+num_vertices = size(PHI,1);
 WKS=zeros(num_vertices,nWKS);
 
 log_E=log(max(abs(E),1e-6))';
@@ -72,5 +70,3 @@ end
 
 % normalize WKS
 WKS(:,:) = WKS(:,:)./repmat(C,num_vertices,1);
-
-
