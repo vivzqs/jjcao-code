@@ -7,22 +7,13 @@
 % Copyright (c) 2012 Junjie Cao
 
 clear;clc;close all;
-%MYTOOLBOXROOT='E:/jjcaolib/toolbox';
-MYTOOLBOXROOT='../..';
-addpath ([MYTOOLBOXROOT '/jjcao_mesh'])
-addpath ([MYTOOLBOXROOT '/jjcao_mesh/feature'])
-addpath ([MYTOOLBOXROOT '/jjcao_io'])
-addpath ([MYTOOLBOXROOT '/jjcao_plot'])
-addpath ([MYTOOLBOXROOT '/jjcao_interact'])
-addpath ([MYTOOLBOXROOT '/jjcao_common'])
-addpath ([MYTOOLBOXROOT '/Ncut_9'])
+addpath(genpath('../../'));
 
 DEBUG = 1;
 %% input
 M.npatch = 50;
 USE_CONCAVE_WEIGHT=0;
-% M.filename = [MYTOOLBOXROOT '/data/wolf0.off']; %cube_f300, cube_f1200,fandisk,wolf0
-M.filename = 'E:\jjcao_data\CorrsBenchmark\Data\watertight_shrec07\Meshes\101.off';
+M.filename = '/data/wolf0.off'; %cube_f300, cube_f1200,fandisk,wolf0
 [M.verts,M.faces] = read_mesh(M.filename);
 % [M.verts,M.faces] = read_mesh();
 [normal M.fnormal] = compute_normal(M.verts,M.faces);
