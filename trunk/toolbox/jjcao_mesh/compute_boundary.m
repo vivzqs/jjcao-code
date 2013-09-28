@@ -4,6 +4,7 @@ function boundary=compute_boundary(face, options)
 %
 %   boundary=compute_boundary(face);
 %
+%   changed to extract multi boundaries by jjcao 2013
 %   Copyright (c) 2007 Gabriel Peyre
 
 options.null = 0;
@@ -28,37 +29,43 @@ for i=1:nface
 end
 A=A+A';
 
+boundary = {};
+tag = zeros(nvert,1);
 for i=1:nvert
+    if tag(i), continue, end;
     u=find(A(i,:)==1);
-    if ~isempty(u)
-        boundary=[i u(1)];
-        break;
+    if ~isempty(u) && ~tag(u(1))
+        border=[i u(1)];
+        tag(i) = 1; tag(u(1)) = 1;
+        s=border(2);
+        j=2;
+        while(j<=nvert)
+            u=find(A(s,:)==1);
+            if length(u)~=2
+                warning('problem in border');
+            end
+            if u(1)==border(j-1)
+                s=u(2);
+            else
+                s=u(1);
+            end
+            if s~=border(1)
+                border=[border s];
+                tag(s) = 1;
+            else
+                break;
+            end
+            j=j+1;
+        end
+
+        if j>nvert
+            warning('problem in border');
+        end
+        boundary{end+1} = border;
     end
 end
 
-s=boundary(2);
-i=2;
-while(i<=nvert)
-    u=find(A(s,:)==1);
-    if length(u)~=2
-        warning('problem in boundary');
-    end
-    if u(1)==boundary(i-1)
-        s=u(2);
-    else
-        s=u(1);
-    end
-    if s~=boundary(1)
-        boundary=[boundary s];
-    else
-        break;
-    end
-    i=i+1;
-end
-       
-if i>nvert
-    warning('problem in boundary');
-end
+
 
 
 %%% OLD %%%
