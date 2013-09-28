@@ -6,7 +6,7 @@ addpath(genpath('../../'));
 
 %% compute agd
 [verts,faces] = read_mesh('wolf0.off');
-nbr_landmarks = 100; % the number of landmarks 
+nbr_landmarks = 150; % the number of landmarks 
 DEBUG=0;     % 1,view the voronoi cells and agd cells; 0,otherwise;
 normalize=0; %1£¬normalize agd to 0-1£»0,otherwise
 [agd,landmark]=compute_awks(verts,faces,nbr_landmarks,DEBUG);
