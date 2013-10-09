@@ -77,8 +77,8 @@ options.p = max(35,2*nbEigenValues); %voir
 options.p = min(options.p,n);
 
 %warning off
-% [vbar,s,convergence] = eigs2(@mex_w_times_x_symmetric,size(P,1),nbEigenValues,'LA',options,tril(P)); 
-[vbar,s,convergence] = eigs_new(@mex_w_times_x_symmetric,size(P,1),nbEigenValues,'LA',options,tril(P)); 
+[vbar,s,convergence] = eigs(@mex_w_times_x_symmetric,size(P,1),nbEigenValues,'LA',options,tril(P)); 
+% [vbar,s,convergence] = eigs_new(@mex_w_times_x_symmetric,size(P,1),nbEigenValues,'LA',options,tril(P)); 
 %warning on
 
 s = real(diag(s));
