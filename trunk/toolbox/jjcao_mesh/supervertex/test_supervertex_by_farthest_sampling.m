@@ -8,9 +8,9 @@ addpath(genpath('../../'));
 
 
 %%
-[M.verts,M.faces] = read_mesh('/data/fandisk.off');
+[M.verts,M.faces] = read_mesh('/data/wolf0.off');
 nverts = size(M.verts,1);
-nbr_landmarks = 100; % number of points, eg. 400
+nbr_landmarks = 20; % number of points, eg. 400
 [M.face_patch, patch_area,landmark] = supervertex_by_farthest_sampling(M.verts,M.faces,nbr_landmarks);
 M.npatch = max(M.face_patch);
 
