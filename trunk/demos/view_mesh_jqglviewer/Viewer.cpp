@@ -83,6 +83,10 @@ bool Viewer::openMesh(const QString &fileName)
 	mesh_.clear();
 	pickedVertices_.clear();
 
+	beDraging_=false;
+	current_picked_vertex = 0;
+
+	///
     std::ifstream stream(fileName.toUtf8() );
     stream >> mesh_;
     if(!stream || !mesh_.is_valid() || mesh_.empty())
@@ -114,10 +118,8 @@ void Viewer::computeShortestDistance()
 	showScalar_ = true;
 	updateGL(); // update draw
 }
-Viewer::Viewer(QWidget *parent)  : QGLViewer(parent), flatShading_(false), frontFace_(true), pointSize_(0.1), showScalar_(false), wireframe_(false)
+Viewer::Viewer(QWidget *parent)  : QGLViewer(parent), flatShading_(false), frontFace_(true), pointSize_(0.1), showScalar_(false)
 {
-	picked_ = false;
-
 	scalarRange_[0] = 0; scalarRange_[1] = 1;
 
 	// The STEREO action is disabled
@@ -132,7 +134,7 @@ Viewer::Viewer(QWidget *parent)  : QGLViewer(parent), flatShading_(false), front
 	restoreStateFromFile();  // Restore previous Viewer state.  
 	help();// Opens help window
 }
-
+// init opengl
 void Viewer::init()
 {
 	setBackgroundColor(QColor(255,255,255));
@@ -195,12 +197,16 @@ void drawFaces(Polyhedron &mesh, bool showScalar, double* scalarRange)
 	glEnd(); // end polygon assembly
 	//glFlush();
 }
-void drawVertices(std::list<Polyhedron::Vertex_iterator> &pickedVertices, double pointSize, bool prePolygonMode)
+void drawVertices(std::list<Polyhedron::Vertex_iterator> &pickedVertices, double pointSize)
 {
+	// save previous state
+	GLint polygonMode;
+	glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+
+	//
+	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);	
 	GLUquadricObj* pQuadric = gluNewQuadric();	
-	::glPolygonMode(GL_FRONT,GL_FILL);	
-	Polyhedron::Vertex_iterator pv;
-	
+	Polyhedron::Vertex_iterator pv;	
 	for (std::list<Polyhedron::Vertex_iterator>::iterator it = pickedVertices.begin(); it != pickedVertices.end(); ++it)
 	{
 		::glPushMatrix();
@@ -211,10 +217,9 @@ void drawVertices(std::list<Polyhedron::Vertex_iterator> &pickedVertices, double
 	}
 	gluDeleteQuadric(pQuadric);
 
-	if (prePolygonMode)
-		glPolygonMode(GL_FRONT, GL_LINE);
-	else
-		glPolygonMode(GL_FRONT, GL_FILL);
+
+	// restore state
+	glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 }
 void Viewer::drawSelectionRectangle() const
 {
@@ -254,14 +259,14 @@ void Viewer::draw()
 	if (selectionMode_ == ADD)
 		drawSelectionRectangle();
 	
+	glColor3d(1, 0, 0);
+	drawVertices(pickedVertices_, pointSize_);
+
 	/////////////////////////////////////////////////////////////////////////
 	//draw faces
 	glColor3d(0.2, 0.4, 0.4);//set mesh color
     //glPolygonMode(GL_BACK, GL_FILL);  // 设置反面为线形模式
 	drawFaces(mesh_, showScalar_, scalarRange_);
-
-	glColor3d(1, 0, 0);
-	drawVertices(pickedVertices_, pointSize_, wireframe_);
 }
 void Viewer::drawWithNames()
 {
@@ -283,6 +288,27 @@ void Viewer::drawWithNames()
 }
 void Viewer::mousePressEvent(QMouseEvent* e)
 {
+    if(e->buttons() & Qt::RightButton &&  e->modifiers() & Qt::AltModifier )
+    {
+	    beDraging_ = true; 
+
+		rectangle_ = rectangle_.normalized();
+		setSelectRegionWidth(rectangle_.width());
+		setSelectRegionHeight(rectangle_.height());
+		select(rectangle_.center());
+
+		if ( current_picked_vertex != 0)
+		{
+			move_p = current_picked_vertex->point();
+			std::stringstream ss;
+			ss<<"move_p"<<move_p.x()<<" "<<move_p.y()<<" "<<move_p.z()<<std::endl;
+			QString str(ss.str().c_str());
+			emit vertsPicked(str);
+		}
+    }
+	else
+		beDraging_ = false;
+
 	rectangle_ = QRect(e->pos(), e->pos());
 	if ((e->button() == Qt::LeftButton) && (e->modifiers() == Qt::ShiftModifier))
 		selectionMode_ = ADD;
@@ -292,21 +318,22 @@ void Viewer::mousePressEvent(QMouseEvent* e)
 
 void Viewer::mouseMoveEvent(QMouseEvent *e)
 {	
-	if (picked_ && 
+	if (beDraging_ && 
 		e->buttons() & Qt::RightButton &&
-		e->modifiers() & Qt::AltModifier
-		)
-	{
-		Polyhedron::Vertex_iterator vi = pickedVertices_.back();
-		Point3 p3 = vi->point();
-		Vec s3(p3.x(), p3.y(), p3.z());
-		Vec s2 = camera()->projectedCoordinatesOf(s3);
-		s2.x = e->pos().x();
-		s2.y = e->pos().y();
+		e->modifiers() & Qt::AltModifier)
+	{		
+		if (current_picked_vertex!=0)
+		{
+			Point3 p3 = current_picked_vertex->point();
+			Vec s3(p3.x(), p3.y(), p3.z());
+			Vec s2 = camera()->projectedCoordinatesOf(s3);
+			s2.x = e->pos().x();
+			s2.y = e->pos().y();
 
-		Vec ns3 = camera()->unprojectedCoordinatesOf(s2);
-		vi->point() = Point3(ns3.x, ns3.y, ns3.z);
-		updateGL();
+			Vec ns3 = camera()->unprojectedCoordinatesOf(s2);
+			current_picked_vertex->point() = Point3(ns3.x, ns3.y, ns3.z);
+			updateGL();
+		}
 	}
 	else if( selectionMode_ == ADD && e->buttons() & Qt::LeftButton &&
 		e->modifiers() & Qt::ShiftModifier)
@@ -348,6 +375,28 @@ void Viewer::endSelection(const QPoint& point)
 //	QGLViewer::endSelection(point);
 
 }
+
+void Viewer::clearSelectedPoints()
+{
+	this->pickedVertices_.clear();
+}
+void Viewer::invertSelectedPoints()
+{
+}
+void Viewer::saveSelectedPoints()
+{
+	std::vector<float> arr;
+	arr.push_back(1.0);	arr.push_back(2.0);	arr.push_back(3.0);	arr.push_back(4.0);
+	std::ofstream ofs("output.txt");
+	for (std::list<Polyhedron::Vertex_iterator>::iterator it = this->pickedVertices_.begin(); it != pickedVertices_.end(); ++it)
+	{
+		Polyhedron::Vertex_iterator vi = *it;
+		ofs << vi->index_ << std::endl;
+	}
+	ofs << std::endl;
+	ofs.close();
+	
+}
 void Viewer::addIdToSelection(int id)
 {
 	for(Polyhedron::Vertex_iterator vi = mesh_.vertices_begin(); vi != mesh_.vertices_end(); ++vi)
@@ -360,17 +409,23 @@ void Viewer::addIdToSelection(int id)
 			if ( it == pickedVertices_.end())
 			{
 				//std::cout << "vertex: " << vi->point() << " added to picked vertices" << std::endl;
-				pickedVertices_.push_back(vi);		
+				pickedVertices_.push_back(vi);	
+				current_picked_vertex = vi;
 
 				//ManipulatedFrame* mf = manipulatedFrame();
 				//mf->setPosition(vi->point().x(),vi->point().y(),vi->point().z());
-				picked_ = true;
 			}
 			else
 			{
-				//std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
-				pickedVertices_.erase(it);
-				picked_ = false;
+				if (beDraging_)
+				{
+					current_picked_vertex = vi;
+				}
+				else
+				{
+					//std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
+					pickedVertices_.erase(it);
+				}
 			}
 			/*std::stringstream ss;	
 			ss << vi->index_ << "(" << vi->point().x() << ", " << vi->point().y() << ", "<< vi->point().z() << ") ";

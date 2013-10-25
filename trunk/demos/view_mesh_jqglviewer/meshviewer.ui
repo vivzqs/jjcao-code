@@ -35,7 +35,17 @@
     </property>
     <addaction name="actionOpen"/>
    </widget>
+   <widget class="QMenu" name="menuSelect_Points">
+    <property name="title">
+     <string>Select Points</string>
+    </property>
+    <addaction name="actionClear_selected"/>
+    <addaction name="actionInvert_selected"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_selected"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSelect_Points"/>
   </widget>
   <widget class="QToolBar" name="toolBar1">
    <attribute name="toolBarArea">
@@ -160,6 +170,21 @@
    </property>
    <property name="toolTip">
     <string>Shortest Distance from 1 vertex to all</string>
+   </property>
+  </action>
+  <action name="actionClear_selected">
+   <property name="text">
+    <string>clear selected</string>
+   </property>
+  </action>
+  <action name="actionInvert_selected">
+   <property name="text">
+    <string>invert selected</string>
+   </property>
+  </action>
+  <action name="actionSave_selected">
+   <property name="text">
+    <string>save selected</string>
    </property>
   </action>
  </widget>
