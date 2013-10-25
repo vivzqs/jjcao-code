@@ -21,6 +21,10 @@ void MeshViewer::setupActions()
 	connect( ui.actionShow_Scalar, SIGNAL(triggered()), ui.viewer, SLOT(showScalar()));
 	connect( ui.actionShortest_Dist, SIGNAL(triggered()), ui.viewer, SLOT(computeShortestDistance()));
 
+	connect( ui.actionClear_selected, SIGNAL(triggered()), ui.viewer, SLOT(clearSelectedPoints()));
+	connect( ui.actionInvert_selected, SIGNAL(triggered()), ui.viewer, SLOT(invertSelectedPoints()));
+	connect( ui.actionSave_selected, SIGNAL(triggered()), ui.viewer, SLOT(saveSelectedPoints()));
+
 	connect(ui.viewer, SIGNAL(vertsPicked(QString&)), this, SLOT(logging(QString&)));
 }
 

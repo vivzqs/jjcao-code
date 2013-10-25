@@ -23,6 +23,10 @@ public slots:
 	void showScalar();
 	void computeShortestDistance();
 
+	void clearSelectedPoints();
+	void invertSelectedPoints();
+	void saveSelectedPoints();
+
 public :
 	Viewer(QWidget *parent);
 	bool openMesh(const QString &fileName);
@@ -51,10 +55,14 @@ private:
 	double pointSize_;
 	bool showScalar_;
 	double scalarRange_[2];
-	bool picked_;
+
 	enum SelectionMode { NONE, ADD, REMOVE };
 	SelectionMode selectionMode_;
 	QRect rectangle_;
+
+	bool beDraging_;
+	Polyhedron::Vertex_iterator current_picked_vertex;
+	Polyhedron::Point_3 move_p;
 };
 
 #endif
