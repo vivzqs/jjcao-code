@@ -56,10 +56,11 @@ private:
 	bool showScalar_;
 	double scalarRange_[2];
 
+
 	enum SelectionMode { NONE, ADD, REMOVE };
 	SelectionMode selectionMode_;
 	QRect rectangle_;
-
+	std::vector<bool> vertPickedStatus_;
 	bool beDraging_;
 	Polyhedron::Vertex_iterator current_picked_vertex;
 	Polyhedron::Point_3 move_p;

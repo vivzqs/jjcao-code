@@ -30,7 +30,7 @@ void compute_bounding_box(Polyhedron &mesh, qglviewer::Vec &minv, qglviewer::Vec
 		maxv.z =  max(maxv.z,p.z());
 	}
 }
-void setupIndex(Polyhedron &mesh, double* scalarRange)
+void setupIndex(Polyhedron &mesh, double* scalarRange, std::vector<bool> &vertPickedStatus)
 {
 	if(mesh.empty())
 		return;
@@ -46,6 +46,8 @@ void setupIndex(Polyhedron &mesh, double* scalarRange)
 			scalarRange[0] = pv->scalar_;
 		if ( pv->scalar_ > scalarRange[1])
 			scalarRange[1] = pv->scalar_;
+
+		vertPickedStatus.push_back(false);
 	}
 }
 double minEdgeLen(Polyhedron &mesh, double threshold)
@@ -82,11 +84,12 @@ bool Viewer::openMesh(const QString &fileName)
 {
 	mesh_.clear();
 	pickedVertices_.clear();
+	vertPickedStatus_.clear();
 
 	beDraging_=false;
 	current_picked_vertex = 0;
 
-	///
+	/////////////////////
     std::ifstream stream(fileName.toUtf8() );
     stream >> mesh_;
     if(!stream || !mesh_.is_valid() || mesh_.empty())
@@ -96,7 +99,7 @@ bool Viewer::openMesh(const QString &fileName)
     }
 	std::for_each(mesh_.facets_begin(), mesh_.facets_end(), Face_normal());
 	std::for_each(mesh_.vertices_begin(), mesh_.vertices_end(), Vertex_normal());
-	setupIndex(mesh_, scalarRange_);
+	setupIndex(mesh_, scalarRange_, vertPickedStatus_);
 
 	// setting camera so that the loaded mesh can be viewed entirely
 	qglviewer::Vec minv(0,0,0), maxv(1,1,1);
@@ -379,9 +382,29 @@ void Viewer::endSelection(const QPoint& point)
 void Viewer::clearSelectedPoints()
 {
 	this->pickedVertices_.clear();
+	vertPickedStatus_.assign(vertPickedStatus_.size(), false);
 }
 void Viewer::invertSelectedPoints()
 {
+	if (mesh_.empty())	
+		return;
+
+
+	this->pickedVertices_.clear();
+
+	int i = 0;
+	for(Polyhedron::Vertex_iterator vi =  mesh_.vertices_begin(); vi != mesh_.vertices_end(); ++vi, ++i)
+	{
+		if (vertPickedStatus_[i])
+		{
+			vertPickedStatus_[i] = false;
+		}
+		else
+		{
+			vertPickedStatus_[i] = true;
+			pickedVertices_.push_back(vi);
+		}
+	}
 }
 void Viewer::saveSelectedPoints()
 {
@@ -402,7 +425,8 @@ void Viewer::addIdToSelection(int id)
 	for(Polyhedron::Vertex_iterator vi = mesh_.vertices_begin(); vi != mesh_.vertices_end(); ++vi)
 	{		
 		if ( vi->index_ == id)
-		{				
+		{		
+			vertPickedStatus_[id] = true;
 			//std::cout << "Picked vertex name is " << id << std::endl;
 					
 			std::list<Polyhedron::Vertex_iterator>::iterator it = std::find(pickedVertices_.begin(), pickedVertices_.end(), vi);
@@ -425,6 +449,7 @@ void Viewer::addIdToSelection(int id)
 				{
 					//std::cout << "vertex: " << vi->point() << " removed frompicked vertices" << std::endl;
 					pickedVertices_.erase(it);
+					vertPickedStatus_[id] = false;
 				}
 			}
 			/*std::stringstream ss;	
