@@ -1,11 +1,18 @@
-function [dist1, dist2] = dist_between_parts(v1, v2)
-dist1 = distBetweenParts(v1, v2);
-dist2 = distBetweenParts(v2, v1);
+function [mean_dist, max_dist] = dist_between_parts(v1, v2)
+[mean_dist1, max_dist1] = distBetweenParts(v1, v2);
+[mean_dist2, max_dist2] = distBetweenParts(v2, v1);
+if mean_dist1<mean_dist2
+    mean_dist = mean_dist1;
+    max_dist = max_dist1;
+else
+    mean_dist = mean_dist2;
+    max_dist = max_dist2;
+end
 
-function dist = distBetweenParts(v1, v2)
+function [mean_dist, max_dist] = distBetweenParts(v1, v2)
 n1 = size(v1,1);
 n2 = size(v2,1);
-dist = 0;
+dists = zeros(n1,1);
 for i = 1:n1
     minErr = 999999;
     pt1 = v1(i,:);
@@ -16,6 +23,7 @@ for i = 1:n1
             minErr = tmp;
         end
     end
-    dist = dist + minErr;
+    dists(i) = minErr;
 end
-dist = dist/n1;
+mean_dist = mean(dists);
+max_dist = max(dists);
