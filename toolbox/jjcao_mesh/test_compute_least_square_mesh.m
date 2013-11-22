@@ -14,7 +14,7 @@ addpath ([MYTOOLBOXROOT 'jjcao_plot'])
 %% options
 DEBUG=1;
 constraint_weight = 10;
-KEEP_DETAIL = 1;
+KEEP_DETAIL = 0;
 USE_FAREST_POINT_SAMPLING = 0;
 NUM_SAMPLES = 100;
 
