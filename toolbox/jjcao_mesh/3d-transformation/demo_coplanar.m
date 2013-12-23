@@ -7,7 +7,7 @@ addpath(genpath('../../'));
 DEBUG = 1;
 
 %% input
-[parts, vertices]= read_parts_obj('cr1b.obj');
+[parts, vertices]= read_parts_obj('SimpleChair1.obj');
 if DEBUG
     figure('Name','input'); set(gcf,'color','white');hold on;
     for i=1:length(parts)
@@ -17,7 +17,7 @@ if DEBUG
 end
 
 %% display pair
-pair = [4, 5];
+pair = [3,8]; % pair = [5, 10];
 [parts( pair(1)).name, '-', parts( pair(2)).name]
 
 faces1 = parts(pair(1)).faces;
@@ -33,12 +33,17 @@ scatter3(verts1(:,1),verts1(:,2), verts1(:,3),50,'g','filled');
 scatter3(verts2(:,1),verts2(:,2), verts2(:,3),50,'b','filled');
 
 %%
-n1 = [-0.99981954406388474,0.017650688767871195,0.0070237094120879405];
-n2 = [0.99993241315071746,-0.011234751443883625,-0.0029915699184806369];
-p1 = [0.0034921637871319845,0.00000000000000000,0.00000000000000000];
-plane0 = createPlane(p1, n1);
-drawPlane3d(plane0, 'g');
+p1 = [0.236023, 0.242044, 0.523072];
+n1 = [0.999966, -0.00784482, -0.00265851];
+plane1 = createPlane(p1, n1);
+drawPlane3d(plane1, 'g');
 scatter3(p1(:,1),p1(:,2),p1(:,3),100,'r','filled');
+
+p2 = [0.236142, -0.0861743, 0.370715];
+n2 = [0.942643, 0.235494, 0.236574];
+plane2 = createPlane(p2, n2);
+drawPlane3d(plane2, 'b');
+scatter3(p2(:,1),p2(:,2),p2(:,3),100,'r','filled');
 %%
 p1=[-0.18528800000000001, 0.24143600000000001,0.57294599999999996];
 p2=[0.20901700000000001, 0.24143600000000001,0.57177800000000001];
