@@ -8,7 +8,8 @@ DEBUG = 1;
 USE_PAIR = 1;
 
 %% input
-[parts, verts]= read_parts_obj('FancyChair.obj');
+[parts, verts]= read_parts_obj('cr1b.obj');
+
 if DEBUG
     figure('Name','input'); set(gcf,'color','white');hold on;
     for i=1:length(parts)
@@ -20,7 +21,7 @@ end
 %% display pair
 figure('Name','parts'); set(gcf,'color','white');hold on;axis off; axis equal; mouse3d;
 if USE_PAIR
-    pair = [1, 5];
+    pair = [2, 3];
     [parts( pair(1)).name, '-', parts( pair(2)).name]
     faces1 = parts(pair(1)).faces;
     faces2 = parts(pair(2)).faces;
@@ -54,39 +55,16 @@ if USE_PAIR
     center = 0.5*(c1+c2);
     line0 = createLine3d(c1, c2);    
 %     drawLine3d(line0, 'b');
-    normal = c1-c2;
-    
-%     s0=[0.31671700000000003,0.22980000000000000,0.56135999999999997;...
-%        0.30138100000000001,-0.21930600000000000,0.76218699999999995];%s0
-%     s2=[0.32389000000000001,-0.056196500000000003,0.54940599999999995; ...
-%        0.34144200000000002,-0.38408999999999999,0.031425799999999997];%s2
-% %     s1=[0.30904900000000002,0.0052470000000000017,0.66177350000000001;...
-% %         0.33266600000000002,-0.22014324999999998,0.29041589999999995;];
-%     s1=[0.5*(s0(1,:)+s0(2,:)); 0.5*(s2(1,:)+s2(2,:))];
-%     line0 = createLine3d(s0(1,:), s0(2,:));    
-% %     drawLine3d(line0, 'b');
-%     line0 = createLine3d(s1(1,:), s1(2,:));    
-%     drawLine3d(line0, 'r');    
-%     line0 = createLine3d(s2(1,:), s2(2,:));    
-%     drawLine3d(line0, 'g');    
-%     
-%     normal = cross(s0(1,:)-s0(2,:), s2(1,:)-s2(2,:));
-%     normal = cross(s1(1,:)-s1(2,:), s2(1,:)-s2(2,:));
-
-    normal = [-0.212043,0.000952209,-0.0140631];
-%     n2 = [-0.130993,0.0014617,-0.00673441];
-%     n1 = n1./sqrt(dot(n1,n1));
-%     n2 = n2./sqrt(dot(n2,n2));
-%     1-dot(n1,n2)
+    normal = c1-c2;   
+    center = [0.0068232, 0.124347, 0.579313];
+    normal = [1,0,0];    
 else
     center = mean(verts);
 %     center = [0.5*(min(verts(:,1)) + max(verts(:,1))), ...
 %         0.5*(min(verts(:,2)) + max(verts(:,2))), ...
 %         0.5*(min(verts(:,3)) + max(verts(:,3)))];
+    center = [0.0068232, 0.124347, 0.579313];
     normal = [1,0,0];
-    
-%     center = [0,0,0.571725];    
-%     normal = [-1,2.67949e-08,0];
     drawVector3d(center, normal, 'b');
 end
 scatter3(center(:,1),center(:,2), center(:,3),100,'r','filled');
@@ -99,12 +77,3 @@ scatter3(verts2new(:,1),verts2new(:,2), verts2new(:,3),50,'r','filled');
 
 %% distance 
 [dist1, dist2] = dist_between_parts(verts1, verts2new);
-(dist1+dist2)*0.5
-
-% p1 = min(verts1);
-% p2 = max(verts1);
-% sqrt( sum( (p1-p2).^2))
-% 
-% p1 = min(verts2);
-% p2 = max(verts2);
-% sqrt( sum( (p1-p2).^2))
