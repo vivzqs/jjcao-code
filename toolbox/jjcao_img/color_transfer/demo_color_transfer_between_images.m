@@ -1,4 +1,10 @@
 %
+% basic implementation of the paper, not including the two potentional
+% improvements.
+%
+% Improvement 1 will be done later
+% Improvement 2: no plan for it since it may be not improtant in practice?
+%
 % reference: cga01_Color transfer between images
 %
 % Copyright (c) 2014 Junjie Cao
