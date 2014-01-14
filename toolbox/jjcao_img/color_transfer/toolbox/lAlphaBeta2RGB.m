@@ -15,7 +15,7 @@ b2=[4.4687   -3.5887    0.1196
     0.0585   -0.2611    1.2057];
 rgb = b2 * LMS;
 
-im = zeros(imsize);
+% im = zeros(imsize);
 im(:,:,1) = reshape( rgb(1,:), imsize(1), imsize(2) );
 im(:,:,2) = reshape( rgb(2,:), imsize(1), imsize(2) );
 im(:,:,3) = reshape( rgb(3,:), imsize(1), imsize(2) );
