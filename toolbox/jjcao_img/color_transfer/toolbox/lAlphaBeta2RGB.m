@@ -8,7 +8,7 @@ function im = lAlphaBeta2RGB(lAlphaBeta, imsize)
 d2=[1 1 1;1 1 -1;1 -2 0];
 c2=[1/sqrt(3) 0 0;0 1/sqrt(6) 0;0 0 1/sqrt(2)];
 LMS = d2 * c2 * lAlphaBeta;
-LMS = 10.^LMS;
+LMS = 10.^LMS-1;
 
 b2=[4.4687   -3.5887    0.1196
    -1.2197    2.3831   -0.1626
