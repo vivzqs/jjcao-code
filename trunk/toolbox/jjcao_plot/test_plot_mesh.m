@@ -52,7 +52,7 @@ colorbar('off');
 
 %% display bundary vertices
 boundary=compute_boundary(M.faces);
-scatter3(M.verts(boundary,1),M.verts(boundary,2), M.verts(boundary,3),50,'r','filled');
+scatter3(M.verts(boundary{:},1),M.verts(boundary{:},2), M.verts(boundary{:},3),50,'r','filled');
 
 %% display texture, why not correct?
 figure('Name','Texture'); set(gcf,'color','white');hold on;
