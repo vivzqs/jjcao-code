@@ -1,3 +1,14 @@
 basic tutorial
-	jjcao_mesh/tutorial_compute_harmonic_field
-	jjcao_mesh/test_compute_least_square_mesh
+
+IO:
+read & display a mesh: jjcao_plot/eg_trisurf.m
+
+
+Laplacian:
+jjcao_mesh/tutorial_compute_harmonic_field
+jjcao_mesh/test_compute_least_square_mesh
+
+color transfer
+1. jjcao_img\color_transfer\demo_color_transfer_between_images
+
+
