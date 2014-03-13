@@ -1,10 +1,10 @@
 function A = triangulation2adjacency(faces,verts)
 
 % triangulation2adjacency - compute the adjacency matrix
-%   of a given triangulation.
-%
+%   of a given triangulation, i.e. A(i,j)=1 if edge e_ij exists.
 %   A = triangulation2adjacency(faces);
-% or for getting a weighted graph using length of each edge
+% or for getting a weighted "adjacency" matrix using length of each edge,
+% i.e. A(i,j)=dist(i,j) if edge e_ij exists.
 %   A = triangulation2adjacency(faces,vertex);
 %
 %   Adapted by jjcao 2012
