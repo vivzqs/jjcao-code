@@ -50,7 +50,7 @@ while 1
         else
             s(idx) = ' ';
             tmp = sscanf(s(3:end), '%d %d %d %d %d %d');
-            faces(end+1,:) = tmp(1:2:end);
+            faces(end+1,:) = tmp(1:length(tmp)/3:end);
         end
     elseif ~isempty(s) && strcmp(s(1:2), 'v ') % vertex
         vertex(end+1,:) = sscanf(s(3:end), '%f %f %f');
