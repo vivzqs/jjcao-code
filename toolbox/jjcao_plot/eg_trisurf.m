@@ -21,26 +21,39 @@ scatter3(M.verts(:,1),M.verts(:,2), M.verts(:,3),10,M.verts(:,2),'filled');
 axis off;    axis equal;   set(gcf,'Renderer','OpenGL');
 camorbit(0,0,'camera'); axis vis3d; view(-90, 0); mouse3d
 
-%% display mesh 1
+%% display mesh with specified face and edge color
 figure('Name','specified face and edge color'); set(gcf,'color','white');hold off;
 h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
     'FaceColor', 'cyan',  'edgecolor',[1,0,0], 'faceAlpha', 0.9); axis off; axis equal; mouse3d
 
-%% display mesh 2  
+%% display mesh with specified face color
+figure('Name','specified face color'); set(gcf,'color','white');hold off;
+h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
+     'FaceColor', 'cyan', 'edgecolor','none'); axis off; axis equal; mouse3d
+L1 = light('Position', [-1, -1, -1]);
+L2 = light('Position', [1, 1, 1]);
+lighting phong
+set(h, 'AmbientStrength', 0.75);
+set(h, 'DiffuseStrength', 0.5);
+
+
+ %% display mesh with specified vertex color using flat shading
 figure('Name','specified vertex color using flat shading'); set(gcf,'color','white');hold off;
 shading_type = 'flat';
 h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
     'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; mouse3d
 
-%% display mesh 3
+%% display mesh with specified vertex color using interp shading
 figure('Name','specified vertex color using interp shading'); set(gcf,'color','white');
-shading_type = 'interp';
-h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
-    'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; mouse3d
-set(h, 'edgecolor', 'none'); % cancel display of edge.
+% shading_type = 'interp';
+% h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
+%     'FaceVertexCData', M.verts(:,1), 'FaceColor',shading_type, 'faceAlpha', 0.9); axis off; axis equal; mouse3d
+% set(h, 'edgecolor', 'none'); % cancel display of edge.
 
-colormap jet(256);
-colorbar
+h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
+    'FaceVertexCData', M.verts(:,1), 'edgecolor','none','faceAlpha', 0.9); axis off; axis equal; mouse3d
+shading interp
+colormap jet(256);colorbar
 % colorbar('off');
 
 %% display bundary vertices
