@@ -35,12 +35,11 @@ k = c*sum(A,2)./sumDistPerVert + 1;
 % axis equal; colormap jet(256);    
 for i = t
     % Mt
-    
-    verts = gaussian_smoothing(M.verts, M.verts, dist_const*sqrt(i)*ones(length(k),1), i, tree);
+    verts = gaussian_smoothing(M.verts, M.verts, dist_const*sqrt(i)*ones(nverts,1), i*ones(nverts,1), tree);    
     % SMt: saliency of Mt
     SMt = log_spectral_saliency(verts, M.faces, options);
     % Mkt
-    verts = gaussian_filter(M.verts, dist_const*sqrt(i*k), i*k, tree);
+    verts = gaussian_smoothing(M.verts, M.verts,dist_const*sqrt(i*k), i*k, tree);
     % SMkt: saliency of Mkt
     SMkt = log_spectral_saliency(verts, M.faces, options);
     % absolute difference of them
