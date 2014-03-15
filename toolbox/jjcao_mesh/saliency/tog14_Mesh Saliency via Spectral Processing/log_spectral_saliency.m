@@ -1,0 +1,1 @@
+function [saliency] = log_spectral_saliency(verts, faces, options)

@@ -5,7 +5,8 @@
 
 mex adjacency_matrix.cpp
 mex minimaAndMaxima.cpp
-% mex -g -largeArrayDims -I"../../include/eigen-3.1.3" vertex_area.cpp
+
+% mex -g -largeArrayDims -I"../../include/eigen-3.1.3" vertex_area.cpp % for debuging
 mex -largeArrayDims -I"../../include/eigen-3.1.3" vertex_area.cpp
 mex -largeArrayDims -I"../../include/eigen-3.1.3" perform_mesh_weight.cpp
 mex -largeArrayDims -I"../../include/eigen-3.1.3" 3d-transformation/create_rotation3d_line_angle.cpp

@@ -1,4 +1,5 @@
 % test for heat diffusion on meshes
+%   Copyright (c) 2007 Gabriel Peyre
 addpath(genpath('..\..\..\'));
 
 % load mesh
