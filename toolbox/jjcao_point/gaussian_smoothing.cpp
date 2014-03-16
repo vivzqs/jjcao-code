@@ -19,7 +19,7 @@ void retrieve_tree( const mxArray* matptr, KDTree* & tree){
     if( tree -> ndims() <= 0 )
         mexErrMsgTxt("the k-D tree must have k>0"); 
 }
-//% function nfunc = gaussian_smoothing(verts, func, neighDist, sigma2, kdtree)
+//% function [nfunc,nneigh] = gaussian_smoothing(verts, func, neighDist, sigma2, kdtree)
 //% smoothing a scalar or vector function func defined on verts, using
 //% Gaussian with sigma^2 = sigma2, and find neighbor vertices within
 //% neighDist via kdtree.
@@ -28,6 +28,8 @@ void retrieve_tree( const mxArray* matptr, KDTree* & tree){
 //% func: n*m1 matrix, which is a function defined on verts, you can set func=verts to smooth the point set
 //% neighDist: n*1 distance vector, neighDist(i) is used to collect neighbors of vertex i
 //% sigma2: n*1 vector, sigma2(i) is sigma^2 for the Gaussian filter of vertex i
+//%
+//% nneigh: numbers of neighbors selected for each vertex
 //%
 //% jjcao @ 2014
 //%
@@ -71,6 +73,8 @@ void mexFunction(int nlhs, mxArray * plhs[], int nrhs, const mxArray * prhs[])
     /////////////////////////////////////////////////// Gaussian smoothing
 	plhs[0] = mxCreateDoubleMatrix(row_vertex, column_func, mxREAL);
 	double* result =(double*)mxGetPr(plhs[0]);
+	plhs[1] = mxCreateNumericMatrix(row_vertex, 1, mxINT32_CLASS, mxREAL);
+	int* nneigh =(int*)mxGetPr(plhs[1]);
 	for (int i = 0;i < row_vertex;++i)
 	{
 		double rval(0.0);
@@ -81,26 +85,27 @@ void mexFunction(int nlhs, mxArray * plhs[], int nrhs, const mxArray * prhs[])
 		{
 			point[j] = vertex[j*row_vertex+i];			
 		}
-		tree->ball_query( point, neighDist[i], idxsInRange, dists );
+		tree->ball_query( point, neighDist[i], idxsInRange, dists );		
 		
-		std::vector<double> gauss(idxsInRange.size(),0);
-		for ( int j = 0; j < gauss.size(); ++j)
+		nneigh[i] = idxsInRange.size();
+		std::vector<double> gauss(nneigh[i],0);
+		
+		for ( int j = 0; j < nneigh[i]; ++j)
 		{
-			gauss[j] = exp(-dists[j]*dists[j]/(2*sigma2[idxsInRange[j]])) / sqrt(2*pi*sigma2[idxsInRange[j]]);
+			gauss[j] = exp(-dists[j]*dists[j]/(2*sigma2[i])) / sqrt(2*pi*sigma2[i]);
 		}
 		for (int j = 0;j < column_func; ++j)
 		{
 			int offset = j*row_vertex;
 			//result[i + offset] = gaussian_smoothing(func, idxsInRange, dists);
-			std::vector<double> value(idxsInRange.size(),0);
-			for ( int k = 0; k < value.size(); ++k)
+			std::vector<double> value(nneigh[i],0);
+			for ( int k = 0; k < nneigh[i]; ++k)
 			{
 				value[k] = func[idxsInRange[k] + offset];
 			}			
 			double tmp1 = std::inner_product(gauss.begin(),gauss.end(),value.begin(),0.0);
 			double tmp2 = std::accumulate(gauss.begin(), gauss.end(), 0.0);
 			result[i + offset] = tmp1/tmp2;
-										;
 		}
 	}
 }
