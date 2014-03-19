@@ -50,8 +50,8 @@ int nb_start_points = 0;
 int nb_end_points = 0;
 fibheap_el** heap_pool = NULL;
 // sparse array
-int* irs = NULL; // returns a pointer to the row indices
-int* jcs = NULL;
+mwIndex* irs = NULL; // returns a pointer to the row indices
+mwIndex* jcs = NULL;
 
 typedef bool (*T_callback_insert_node)(int i, int ii);
 
@@ -225,8 +225,8 @@ void mexFunction(	int nlhs, mxArray *plhs[],
 
      /* dealing with sparse array */
     W   = mxGetPr(prhs[0]); // returns a pointer to the numerical values
- 	irs     = (int *)mxGetIr(prhs[0]); // returns a pointer to the row indices
-    jcs     = (int *)mxGetJc(prhs[0]); // returns a pointer to the column pointer array
+ 	irs     = (mwIndex *)mxGetIr(prhs[0]); // returns a pointer to the row indices
+    jcs     = (mwIndex *)mxGetJc(prhs[0]); // returns a pointer to the column pointer array
     n = mxGetM(prhs[0]);
     
 
