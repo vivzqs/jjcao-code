@@ -23,7 +23,7 @@ dist_const = 2.5; % see the paper
 
 %% input
 M.filename = 'Bimba_cvd_30K_R22.off';
-M.filename = 'wolf2_v940.off';
+M.filename = 'wolf2_v753.off';
 % 85_v1089.off, 85_v1814.off, wolf2_v753.off
 % armadillo_v502.off, gargoyle_v502.off,dragon_v1257.off,v2.off
 % sphere1.obj,cube_f1200.off,torus_v500.off

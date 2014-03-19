@@ -14,7 +14,7 @@ if exist('create_rotation3d_line_angle.mexw64', 'file'); movefile('create_rotati
 
 mex -largeArrayDims -I"../../include/eigen-3.1.3" 3d-transformation/transform_point3d.cpp
 if exist('transform_point3d.mexw64', 'file'); movefile('transform_point3d.mexw64', '3d-transformation/'); end
-%% geodesic
+%% geodesic - dijkstra
 % there are three implementations as follows:
 % geodesic 1: the speed is much faster than perform_front_propagation_mesh (geodesic 3), since it is shortest path distance rather than continuous
 % geodesic distance
@@ -23,7 +23,7 @@ if exist('perform_dijkstra_propagation.mexw32', 'file'); movefile('perform_dijks
 if exist('perform_dijkstra_propagation.mexw64', 'file'); movefile('perform_dijkstra_propagation.mexw64', 'geodesic/'); end
 
 % geodesic 2: 
-mex geodesic/mex/dijkstra.cpp 
+mex "-largeArrayDims" geodesic/mex/dijkstra.cpp 
 % eval(['!rename', dijkstra.mexw32 name2]);
 if exist('dijkstra.mexw32', 'file'); movefile('dijkstra.mexw32', 'geodesic/perform_dijkstra_fast.mexw32'); end
 if exist('dijkstra.mexw64', 'file'); movefile('dijkstra.mexw64', 'geodesic/perform_dijkstra_fast.mexw64'); end
@@ -31,8 +31,8 @@ if exist('dijkstra.mexglx', 'file'); movefile('dijkstra.mexglx', 'geodesic/perfo
 if exist('dijkstra.mexmaci', 'file'); movefile('dijkstra.mexmaci', 'geodesic/perform_dijkstra_fast.mexmaci'); end
 
 %% geodesic 3:
-mex geodesic/mex/perform_front_propagation_2d.cpp geodesic/mex/perform_front_propagation_2d_mex.cpp geodesic/mex/fheap/fib.cpp 
-mex geodesic/mex/perform_front_propagation_3d.cpp geodesic/mex/perform_front_propagation_3d_mex.cpp geodesic/mex/fheap/fib.cpp 
+mex "-largeArrayDims" geodesic/mex/perform_front_propagation_2d.cpp geodesic/mex/perform_front_propagation_2d_mex.cpp geodesic/mex/fheap/fib.cpp 
+mex "-largeArrayDims" geodesic/mex/perform_front_propagation_3d.cpp geodesic/mex/perform_front_propagation_3d_mex.cpp geodesic/mex/fheap/fib.cpp 
 if exist('perform_front_propagation_2d.mexw32', 'file');  movefile('perform_front_propagation_2d.mexw32', 'geodesic/');end;
 if exist('perform_front_propagation_2d.mexw64', 'file');  movefile('perform_front_propagation_2d.mexw64', 'geodesic/');end;
 if exist('perform_front_propagation_3d.mexw32', 'file');  movefile('perform_front_propagation_3d.mexw32', 'geodesic/');end;
