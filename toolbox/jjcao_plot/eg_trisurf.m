@@ -17,7 +17,8 @@ M.edges = compute_edges(M.faces);
 %% display point cloud
 figure('Name', 'point set');set(gcf,'color','white');hold on;
 % scatter3(M.verts(:,1),M.verts(:,2), M.verts(:,3),10,'b','filled');
-scatter3(M.verts(:,1),M.verts(:,2), M.verts(:,3),10,M.verts(:,2),'filled');
+scatter3(M.verts(:,1),M.verts(:,2), M.verts(:,3),...
+    10,M.verts(:,1),'filled');
 axis off;    axis equal;   set(gcf,'Renderer','OpenGL');
 camorbit(0,0,'camera'); axis vis3d; view(-90, 0); mouse3d
 
