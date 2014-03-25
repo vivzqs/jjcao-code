@@ -31,7 +31,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 	double *faces = mxGetPr(prhs[0]);
 
 	// output
-	plhs[0] = mxCreateDoubleMatrix(3 * rowf,1,mxREAL);
+	plhs[0] = mxCreateDoubleMatrix(3 * rowf,1,mxREAL);// the size is guessed
 	plhs[1] = mxCreateDoubleMatrix(3 * rowf,1,mxREAL);
 	double *Ir = mxGetPr(plhs[0]);
 	double *Jr = mxGetPr(plhs[1]);
