@@ -21,7 +21,6 @@ if nargin < 2
 %     if exist('adjacency_matrix', 'file')
 %         [I J] = adjacency_matrix(faces);        
 %         A = sparse(I,J,ones(size(I)));
-%         A = double(A>0);
 %         % make sure that all edges are symmetric
 %         A = max(A,A');        
 %     else        
