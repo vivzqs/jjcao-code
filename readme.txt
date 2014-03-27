@@ -1,3 +1,5 @@
+https://jjcao-code.googlecode.com/svn/trunk
+
 1. items should be set in "Environment Variables"
 	CGAL_DIR
 	BOOST_DIR
