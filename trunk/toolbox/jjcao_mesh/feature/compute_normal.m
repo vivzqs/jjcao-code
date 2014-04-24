@@ -1,4 +1,4 @@
-function [normal,normalf] = compute_normal(vertex,face)
+function [normal,normalf] = compute_normal(vertex,face, bEnforceOutward)
 
 % compute_normal - compute the normal of a triangulation
 %
@@ -7,9 +7,11 @@ function [normal,normalf] = compute_normal(vertex,face)
 %   normal(i,:) is the normal at vertex i.
 %   normalf(j,:) is the normal at face j.
 %
-%   changed by jjcao 2012
+%   changed by jjcao 2014
 %   Copyright (c) 2004 Gabriel Peyr?
-
+if nargin < 2
+    bEnforceOutward = 1;
+end
 [vertex,face] = check_face_vertex(vertex,face);
 
 nface = size(face,2);
@@ -35,12 +37,14 @@ d = sqrt( sum(normal.^2,1) ); d(d<eps)=1;
 normal = normal ./ repmat( d, 3,1 );
 
 % enforce that the normal are outward
-v = vertex - repmat(mean(vertex,1), 3,1);
-s = sum( v.*normal, 2 );
-if sum(s>0)<sum(s<0)
-    % flip
-    normal = -normal;
-    normalf = -normalf;
+if bEnforceOutward
+    v = vertex - repmat(mean(vertex,1), 3,1);
+    s = sum( v.*normal, 2 );
+    if sum(s>0)<sum(s<0)
+        % flip
+        normal = -normal;
+        normalf = -normalf;
+    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
