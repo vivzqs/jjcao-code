@@ -57,19 +57,20 @@ options.normalize = 0;
 options.symmetrize = 1; 
 options.type = 'conformal'; % the other choice is 'combinatorial', 'distance', spring, 'conformal', or, 'authalic', mvc, 
 
+%%
 options.method = 'hard';% 'hard', 'soft', 'bi-harmonic'
 [newVertices, A] = compute_least_square_mesh(verts,faces,landmark,delta_coords,s_weights,c_weights,options);
-figure;set(gcf,'color','white');
+figure('Name', options.method);set(gcf,'color','white');
 trisurf(faces,newVertices(:,1),newVertices(:,2),newVertices(:,3)); axis off; axis equal; view3d rot;hold on;
 scatter3(options.constraint_pos(:,1),options.constraint_pos(:,2), options.constraint_pos(:,3),100,'r','filled');
 
 options.method = 'soft';% 'hard', 'soft', 'bi-harmonic'
 [newVertices, A] = compute_least_square_mesh(verts,faces,landmark,delta_coords,s_weights,c_weights,options);
-figure;set(gcf,'color','white');
+figure('Name', options.method);set(gcf,'color','white');
 trisurf(faces,newVertices(:,1),newVertices(:,2),newVertices(:,3)); axis off; axis equal; view3d rot;
 
 options.method = 'bi-harmonic';% 'hard', 'soft', 'bi-harmonic'
 [newVertices, A] = compute_least_square_mesh(verts,faces,landmark,delta_coords,s_weights,c_weights,options);
-figure;set(gcf,'color','white');
+figure('Name', options.method);set(gcf,'color','white');
 trisurf(faces,newVertices(:,1),newVertices(:,2),newVertices(:,3)); axis off; axis equal; view3d rot;
 
