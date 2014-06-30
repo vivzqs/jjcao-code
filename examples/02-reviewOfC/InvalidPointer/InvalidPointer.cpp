@@ -8,6 +8,7 @@ void GetMemory(char *p, int num)
 int main()
 {
     char *str = NULL;
+	delete str;
 
     GetMemory(str, 100);
     strcpy(str, "hello");
