@@ -3,8 +3,10 @@
 % Copyright (c) 2014 Junjie Cao
 clear;clc;close all;
 addpath(genpath('../../'));
+MYTOOLBOXROOT='../..';
 
-[verts,faces] = read_mesh('/data/catHead_v131.off');
+[verts,faces] = read_mesh([MYTOOLBOXROOT '/data/wolf0.off']);
+% [verts,faces] = read_mesh('/data/catHead_v131.off');
 nverts = size(verts,1);
 diagLength = 100;
 [verts,diagLength] = normalize_vertex3d(verts,diagLength);
@@ -17,7 +19,9 @@ dist2 = sum((verts(I,:) - verts(J,:)).^2, 2);
 W = sparse(I,J, sqrt(dist2) );
 
 start_points = [1,2];
+tic
 D = perform_dijkstra_fast(W, start_points)';
+toc
 D1 = perform_dijkstra_fast(A, start_points)';
 sum(sum(abs(D - D1)))
 
