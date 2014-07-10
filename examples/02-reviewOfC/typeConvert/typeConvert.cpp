@@ -12,6 +12,8 @@ float sum_elements(float a[], unsigned length)
 
 int main()
 {
+	int tmp = sizeof "1";
+
 	//////////////////////////
 	int r1 = MIN(3,4);
 	float r2 = MIN(3.0, 4.0);  
