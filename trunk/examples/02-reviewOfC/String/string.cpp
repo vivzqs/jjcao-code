@@ -29,16 +29,37 @@ void cpycat()
 	cout << finalStr << endl;
 }
 
-char* strA(){
+char* strA()
+{
 	char *str= "hell";
 	cout << str << endl;
 	return str;
 }
+
+void sizeofStr()
+{
+	char *str= "hellow";
+	cout << strlen(str) << sizeof(str) << endl;
+	char* pstr = new char[strlen(str)];	
+	strcpy(pstr,str);
+	cout << strlen(pstr) << sizeof(pstr) << endl;
+	cout << pstr << endl;
+
+	for(int k=0; *pstr != '\0'; ++pstr)
+	{
+		cout << *pstr;
+	}
+
+}
 int main()
 {
-	char* tmp = strA();
+	sizeofStr();
+
+	char* tmp = strA();	
 	cout << *tmp << endl;
 	cout << tmp << endl;
+
+
 		//////////////////////////////////
 std::string str("abcd"); 
 const char *p = str.c_str(); 
