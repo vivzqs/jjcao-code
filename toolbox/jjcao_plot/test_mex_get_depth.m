@@ -3,13 +3,33 @@
 
 
 clear;clc;close all;
-%MYTOOLBOXROOT='E:/jjcaolib/toolbox';
-MYTOOLBOXROOT='../';
-addpath ([MYTOOLBOXROOT 'jjcao_interact'])
+addpath(genpath('../'));
 
-peaks;axis off; axis equal; 
+test_file = {['/data/fandisk.off'],['/data/wolf0.off'],[ '/data/catHead_v131.off']};
+M.filename = test_file{3};
+[M.verts,M.faces] = read_mesh(M.filename);
+M.nverts = size(M.verts,1);
+
+figure('Name','specified face and edge color'); set(gcf,'color','white');hold off;
+h=trisurf(M.faces,M.verts(:,1),M.verts(:,2),M.verts(:,3), ...
+    'FaceColor', 'cyan','edgecolor','none'); axis off; axis equal; mouse3d
+set(gcf,'Renderer','OpenGL');mouse3d;
 figure(1);
-mouse3d;
+
+%%
 depthData=mex_get_depth;
 figure
 imshow(depthData);
+
+binData = (depthData<1);
+imshow(binData);
+
+figure;
+[B,L] = bwboundaries(binData);
+imshow(label2rgb(L, @jet, [.5 .5 .5]))
+hold on
+for k = 1:length(B)
+    boundary = B{k};
+    plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
+end
+
