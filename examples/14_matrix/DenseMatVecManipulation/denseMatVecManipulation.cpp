@@ -1,6 +1,10 @@
+// usage of Eigen
+// jjcao
+
 #include <iostream>
 #include <vector>
 #include <Eigen/Dense>
+
 Eigen::Matrix4d create_translation3d(Eigen::Vector3d center)
 {
 	double dx(center.coeff(0)),dy(center.coeff(1)),dz(center.coeff(2));
